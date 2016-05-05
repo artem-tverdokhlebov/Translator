@@ -10,6 +10,8 @@ import Cocoa
 
 class ViewController: NSViewController {
 
+    @IBOutlet var textView: NSTextView!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -22,6 +24,14 @@ class ViewController: NSViewController {
         }
     }
 
+    @IBAction func buttonClicked(sender: NSButton) {
+        let lexAnalyser : LexAnalyser = LexAnalyser( listing: textView.string!)
+        
+        let syntaxAnalyser = SyntaxAnalyser(lexemes: lexAnalyser.lexemes)
 
+        print(lexAnalyser.errors)
+        print(syntaxAnalyser.errors)
+    }
+    
 }
 

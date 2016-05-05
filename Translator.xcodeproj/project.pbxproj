@@ -7,19 +7,27 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AC4741681CD62EFC005A58B8 /* code.txt in Resources */ = {isa = PBXBuildFile; fileRef = AC4741671CD62EFC005A58B8 /* code.txt */; };
 		AC63BBED1CD0259F00631CD0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC63BBEC1CD0259F00631CD0 /* AppDelegate.swift */; };
 		AC63BBEF1CD0259F00631CD0 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC63BBEE1CD0259F00631CD0 /* ViewController.swift */; };
 		AC63BBF11CD0259F00631CD0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AC63BBF01CD0259F00631CD0 /* Assets.xcassets */; };
 		AC63BBF41CD0259F00631CD0 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AC63BBF21CD0259F00631CD0 /* Main.storyboard */; };
+		AC63BBFC1CD02AFA00631CD0 /* LexAnalyser.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC63BBFB1CD02AFA00631CD0 /* LexAnalyser.swift */; };
+		AC63BBFE1CD02FA600631CD0 /* LexTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC63BBFD1CD02FA600631CD0 /* LexTable.swift */; };
+		ACF5A3721CDAA7EA0013395C /* SyntaxAnalyser.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACBE33151CDA455900FF1B34 /* SyntaxAnalyser.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		AC4741671CD62EFC005A58B8 /* code.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = code.txt; sourceTree = "<group>"; };
 		AC63BBE91CD0259F00631CD0 /* Translator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Translator.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AC63BBEC1CD0259F00631CD0 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		AC63BBEE1CD0259F00631CD0 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		AC63BBF01CD0259F00631CD0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		AC63BBF31CD0259F00631CD0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		AC63BBF51CD0259F00631CD0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		AC63BBFB1CD02AFA00631CD0 /* LexAnalyser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LexAnalyser.swift; sourceTree = "<group>"; };
+		AC63BBFD1CD02FA600631CD0 /* LexTable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LexTable.swift; sourceTree = "<group>"; };
+		ACBE33151CDA455900FF1B34 /* SyntaxAnalyser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyntaxAnalyser.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -57,6 +65,10 @@
 				AC63BBF01CD0259F00631CD0 /* Assets.xcassets */,
 				AC63BBF21CD0259F00631CD0 /* Main.storyboard */,
 				AC63BBF51CD0259F00631CD0 /* Info.plist */,
+				AC63BBFB1CD02AFA00631CD0 /* LexAnalyser.swift */,
+				ACBE33151CDA455900FF1B34 /* SyntaxAnalyser.swift */,
+				AC63BBFD1CD02FA600631CD0 /* LexTable.swift */,
+				AC4741671CD62EFC005A58B8 /* code.txt */,
 			);
 			path = Translator;
 			sourceTree = "<group>";
@@ -120,6 +132,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				AC63BBF11CD0259F00631CD0 /* Assets.xcassets in Resources */,
+				AC4741681CD62EFC005A58B8 /* code.txt in Resources */,
 				AC63BBF41CD0259F00631CD0 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -131,7 +144,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				ACF5A3721CDAA7EA0013395C /* SyntaxAnalyser.swift in Sources */,
+				AC63BBFC1CD02AFA00631CD0 /* LexAnalyser.swift in Sources */,
 				AC63BBEF1CD0259F00631CD0 /* ViewController.swift in Sources */,
+				AC63BBFE1CD02FA600631CD0 /* LexTable.swift in Sources */,
 				AC63BBED1CD0259F00631CD0 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -275,6 +291,7 @@
 				AC63BBFA1CD0259F00631CD0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
