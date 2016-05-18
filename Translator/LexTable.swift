@@ -8,8 +8,10 @@
 
 import Foundation
 
+typealias Lexeme = (lineNumber: Int, name: String, substring: String, index: Int)
+
 class LexTable {
-    static internal let table = [
+    static internal let table : [String : Int] = [
         "program" : 1,
         "var" : 2,
         "begin" : 3,
@@ -37,7 +39,7 @@ class LexTable {
         "<=" : 25,
         ">" : 26,
         ">=" : 27,
-        "<>" : 28,
+        "!=" : 28,
         "idn" : 29,
         "con" : 30,
         "not" : 31,
@@ -45,7 +47,9 @@ class LexTable {
         "or" : 33,
         "[" : 34,
         "]" : 35,
-        "label" : 36
+        "{" : 36,
+        "}" : 37,
+        "label" : 38
     ]
     
     static func getCode(s : String) -> Int {
@@ -56,7 +60,34 @@ class LexTable {
         }
     }
     
-    static func getLexem() {
+    static func getString(index: Int) -> String? {
+        for item in table {
+            if item.1 == index {
+                return item.0
+            }
+        }
         
+        return nil
+    }
+    
+    static func isCON(lexeme : Lexeme) -> Bool {
+        let array : [String] = [
+            "con"
+        ]
+        
+        return array.contains(lexeme.name)
+    }
+    
+    static func isIDN(lexeme : Lexeme) -> Bool {
+        let array : [String] = [
+            "idn"
+        ]
+        
+        return array.contains(lexeme.name)
+    }
+    
+    
+    static func isReserved(lexeme : Lexeme) -> Bool {
+        return !isCON(lexeme) && !isIDN(lexeme)
     }
 }

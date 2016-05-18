@@ -16,8 +16,8 @@ class LexAnalyser {
     var indexInLBL = 0
     
     var isBeginPassed = false
-
-    internal var lexemes : [(lineNumber: Int, substring: String, index: Int)] = [(lineNumber: Int, substring: String, index: Int)]()
+    
+    internal var lexemes : [Lexeme] = [Lexeme]()
     internal var IDNs : [(index: Int, name: String)] = [(index: Int, name: String)]()
     internal var CONs : [(index: Int, name: String)] = [(index: Int, name: String)]()
     internal var LBLs : [(index: Int, name: String, type: String)] = [(index: Int, name: String, type: String)]()
@@ -46,7 +46,7 @@ class LexAnalyser {
             }
         }
     }
- 
+    
     func cutString(parts: [String], position: Int) -> [String] {
         if(parts.count == position) {
             return [String]()
@@ -87,7 +87,7 @@ class LexAnalyser {
     func isSignifier(char : String) -> Bool {
         return (char == "+" || char == "-")
     }
- 
+    
     func lexem(string : String, lineNumber : Int) {
         currentPosition = 0
         let parts = string.characters.map { String($0) }
@@ -102,18 +102,20 @@ class LexAnalyser {
                 currentIndexCON = indexInCON
                 CONs.append((index: currentIndexCON, name: result))
             }
-
-            lexemes.append((lineNumber: lineNumber, substring: result, index: LexTable.getCode("con")))
+            
+            lexemes.append((lineNumber: lineNumber, name: LexTable.getString(LexTable.getCode("con"))!, substring: result, index: LexTable.getCode("con")))
         } else {
             indexInCON += 1
-            lexemes.append((lineNumber: lineNumber, substring: result, index: LexTable.getCode(result)))
+            lexemes.append((lineNumber: lineNumber, name: LexTable.getString(LexTable.getCode(result))!, substring: result, index: LexTable.getCode(result)))
         }
     }
     
 }
 
 extension LexAnalyser {
-    func condition1(parts : [String], lineNumber : Int) {
+    func condition1( parts : [String], lineNumber : Int) {
+        var parts = parts
+        
         if parts.count == 0 {
             return
         }
@@ -138,7 +140,7 @@ extension LexAnalyser {
         
         if parts[0] == ";" {
             currentPosition += 1
-            lexemes.append((lineNumber: lineNumber, substring: ";", index: LexTable.getCode(";")))
+            lexemes.append((lineNumber: lineNumber, name: LexTable.getString(LexTable.getCode(";"))!, substring: ";", index: LexTable.getCode(";")))
             return
         }
         
@@ -161,8 +163,14 @@ extension LexAnalyser {
         }
         
         if LexTable.getCode(parts[0]) != -1 {
-            lexemes.append((lineNumber: lineNumber, substring: parts[0], index: LexTable.getCode(parts[0])))
+            lexemes.append((lineNumber: lineNumber, name: LexTable.getString(LexTable.getCode(parts[0]))!, substring: parts[0], index: LexTable.getCode(parts[0])))
             condition1(cutString(parts, position: 1), lineNumber: lineNumber)
+            return
+        }
+        
+        if parts[0] == " " {
+            parts.removeAtIndex(0)
+            condition1(parts, lineNumber: lineNumber)
             return
         }
         
@@ -184,7 +192,7 @@ extension LexAnalyser {
                 condition1(cutString(parts, position: currentPosition), lineNumber: lineNumber)
                 return
             }
-
+            
             if !isBeginPassed && IDNs.contains({ $0.name == result }) {
                 errors.append("Error <identifier already declared> in string #\(lineNumber) : \"\(result)\"")
             }
@@ -195,13 +203,13 @@ extension LexAnalyser {
                 IDNs.append((index: currentIndexIDN, name: result))
             }
             
-            lexemes.append((lineNumber: lineNumber, substring: result, index: LexTable.getCode("idn")))
+            lexemes.append((lineNumber: lineNumber, name: LexTable.getString(LexTable.getCode("idn"))!, substring: result, index: LexTable.getCode("idn")))
         } else {
             if (LexTable.getCode(result) == 3) {
                 isBeginPassed = true
             }
-
-            lexemes.append((lineNumber: lineNumber, substring: result, index: LexTable.getCode(result)))
+            
+            lexemes.append((lineNumber: lineNumber, name: LexTable.getString(LexTable.getCode(result))!, substring: result, index: LexTable.getCode(result)))
             
             if LexTable.getCode(result) == 12 {
                 condition13(parts, lineNumber: lineNumber)
@@ -250,7 +258,7 @@ extension LexAnalyser {
         addConstant(result, lineNumber: lineNumber)
         condition1(cutString(parts, position: currentPosition), lineNumber: lineNumber)
     }
-
+    
     func condition4(parts : [String], lineNumber : Int) {
         var result = "."
         currentPosition += 1
@@ -339,7 +347,7 @@ extension LexAnalyser {
         var result = result
         
         currentPosition = 0
-    
+        
         while (currentPosition <= parts.count - 1) && (isNumber(parts[currentPosition])) {
             result += parts[currentPosition]
             currentPosition += 1
@@ -353,7 +361,7 @@ extension LexAnalyser {
         currentPosition = 0
         
         var result = ""
-    
+        
         if parts[0] == ":" {
             if parts[1] == "=" {
                 result = ":="
@@ -364,14 +372,14 @@ extension LexAnalyser {
             }
         }
         
-        lexemes.append((lineNumber: lineNumber, substring: result, index: LexTable.getCode(result)))
+        lexemes.append((lineNumber: lineNumber, name: LexTable.getString(LexTable.getCode(result))!, substring: result, index: LexTable.getCode(result)))
         condition1(cutString(parts, position: currentPosition), lineNumber: lineNumber)
     }
     
     func condition10(parts : [String], lineNumber : Int) {
         currentPosition = 0
         var result = ""
-    
+        
         if parts[1] == "=" {
             result = ">=";
             currentPosition += 2;
@@ -380,7 +388,7 @@ extension LexAnalyser {
             currentPosition += 1;
         }
         
-        lexemes.append((lineNumber: lineNumber, substring: result, index: LexTable.getCode(result)))
+        lexemes.append((lineNumber: lineNumber, name: LexTable.getString(LexTable.getCode(result))!, substring: result, index: LexTable.getCode(result)))
         condition1(cutString(parts, position: currentPosition), lineNumber: lineNumber)
     }
     
@@ -400,22 +408,22 @@ extension LexAnalyser {
                 currentPosition += 1
             }
         }
-
-        lexemes.append((lineNumber: lineNumber, substring: result, index: LexTable.getCode(result)))
+        
+        lexemes.append((lineNumber: lineNumber, name: LexTable.getString(LexTable.getCode(result))!, substring: result, index: LexTable.getCode(result)))
         condition1(cutString(parts, position: currentPosition), lineNumber: lineNumber)
     }
     
     func condition12(result : String, parts : [String], lineNumber : Int) {
         currentPosition = 0
-    
+        
         if !LBLs.contains({ $0.name == result }) {
             indexInLBL += 1
         }
-
+        
         LBLs.append((index: indexInLBL, name: result, type: "D"))
-    
-        lexemes.append((lineNumber: lineNumber, substring: result, index: LexTable.getCode("label")))
-        lexemes.append((lineNumber: lineNumber, substring: ":", index: LexTable.getCode(":")))
+        
+        lexemes.append((lineNumber: lineNumber, name: LexTable.getString(LexTable.getCode("label"))!, substring: result, index: LexTable.getCode("label")))
+        lexemes.append((lineNumber: lineNumber, name: LexTable.getString(LexTable.getCode(":"))!, substring: ":", index: LexTable.getCode(":")))
         
         condition1(cutString(parts, position: currentPosition), lineNumber: lineNumber)
     }
@@ -436,7 +444,7 @@ extension LexAnalyser {
         
         LBLs.append((index: indexInLBL, name: result, type: "U"))
         
-        lexemes.append((lineNumber: lineNumber, substring: result, index: LexTable.getCode("label")))
+        lexemes.append((lineNumber: lineNumber, name: LexTable.getString(LexTable.getCode("label"))!, substring: result, index: LexTable.getCode("label")))
         
         condition1(cutString(parts, position: currentPosition), lineNumber: lineNumber)
     }

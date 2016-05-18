@@ -9,28 +9,37 @@
 import Cocoa
 
 class ViewController: NSViewController {
-
+    
     @IBOutlet var textView: NSTextView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         // Do any additional setup after loading the view.
     }
-
+    
     override var representedObject: AnyObject? {
         didSet {
-        // Update the view, if already loaded.
+            // Update the view, if already loaded.
         }
     }
-
+    
     @IBAction func buttonClicked(sender: NSButton) {
-        let lexAnalyser : LexAnalyser = LexAnalyser( listing: textView.string!)
+        let lexAnalyser : LexAnalyser = LexAnalyser(listing: textView.string!)
         
         let syntaxAnalyser = SyntaxAnalyser(lexemes: lexAnalyser.lexemes)
-
-        print(lexAnalyser.errors)
-        print(syntaxAnalyser.errors)
+        
+        let rpnGenerator = RPNGenerator(lexemes: lexAnalyser.lexemes)
+        
+        var poliz = ""
+        
+        for item in rpnGenerator.RPNstack {
+            poliz += " " + item.substring
+        }
+        
+        print(poliz)
+        
+        //print(lexAnalyser.lexemes)
     }
     
 }

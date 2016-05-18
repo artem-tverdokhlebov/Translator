@@ -8,13 +8,15 @@
 
 import Foundation
 
+typealias Condition = (alpha: Int, beta: Int, sign: String, stack: Int?)
+
 let OUT = -1
 let BACK = -2
 let NO_NAME = "NO_NAME"
 
 class SyntaxAnalyser {
     
-    var lexemes : [(lineNumber: Int, substring: String, index: Int)]
+    var lexemes : [Lexeme]
     var stack = [Int]()
     
     var currentCondition = 1
@@ -22,7 +24,7 @@ class SyntaxAnalyser {
     
     internal var errors : [String] = [String]()
     
-    let conditions : [(alpha: Int, beta: Int, sign: String, stack: Int?)] = [
+    let conditions : [Condition] = [
         // Main
         (alpha: 1, beta: 2, sign: "program", stack: nil),
         (alpha: 2, beta: 3, sign: "idn", stack: nil),
@@ -46,7 +48,7 @@ class SyntaxAnalyser {
         
         // Marked operator
         (alpha: 400, beta: 101, sign: ":", stack: nil),
-
+        
         // Appropriation
         (alpha: 102, beta: 200, sign: ":=", stack: 103),
         (alpha: 103, beta: BACK, sign: ";", stack: nil),
@@ -62,8 +64,9 @@ class SyntaxAnalyser {
         (alpha: 108, beta: 200, sign: ":=", stack: 109),
         (alpha: 109, beta: 200, sign: "by", stack: 110),
         (alpha: 110, beta: 200, sign: "to", stack: 111),
-        (alpha: 111, beta: 101, sign: ";", stack: nil),
-        (alpha: 112, beta: BACK, sign: ";", stack: nil),
+        (alpha: 111, beta: 101, sign: "{", stack: 112),
+        (alpha: 112, beta: 113, sign: "}", stack: nil),
+        (alpha: 113, beta: BACK, sign: ";", stack: nil),
         
         // If
         (alpha: 114, beta: 115, sign: "goto", stack: nil),
@@ -82,7 +85,7 @@ class SyntaxAnalyser {
         (alpha: 202, beta: 200, sign: "/", stack: nil),
         (alpha: 202, beta: BACK, sign: NO_NAME, stack: nil),
         (alpha: 203, beta: 202, sign: ")", stack: nil),
-
+        
         // SubAutomat Logical Expression
         (alpha: 301, beta: 301, sign: "[", stack: 304),
         (alpha: 301, beta: 301, sign: "not", stack: nil),
@@ -93,22 +96,22 @@ class SyntaxAnalyser {
         (alpha: 302, beta: 200, sign: "<=", stack: 303),
         (alpha: 302, beta: 200, sign: ">", stack: 303),
         (alpha: 302, beta: 200, sign: ">=", stack: 303),
-        (alpha: 302, beta: 200, sign: "<>", stack: 303),
-
+        (alpha: 302, beta: 200, sign: "!=", stack: 303),
+        
         (alpha: 303, beta: 301, sign: "or", stack: nil),
         (alpha: 303, beta: 301, sign: "and", stack: nil),
         (alpha: 303, beta: BACK, sign: NO_NAME, stack: nil),
         (alpha: 304, beta: 303, sign: "]", stack: nil)
     ]
     
-    init(lexemes : [(lineNumber: Int, substring: String, index: Int)]) {
+    init(lexemes : [Lexeme]) {
         self.lexemes = lexemes
         
         mainCycle()
     }
- 
+    
     func mainCycle() {
-        var conditions = [(alpha : Int, beta : Int, sign: String, stack: Int?)]()
+        var conditions = [Condition]()
         
         for condition in self.conditions {
             if condition.alpha == currentCondition {
@@ -122,8 +125,8 @@ class SyntaxAnalyser {
             }
         }
     }
- 
-    func checkSign(conditions : [(alpha : Int, beta : Int, sign: String, stack: Int?)]) -> Bool {
+    
+    func checkSign(conditions : [Condition]) -> Bool {
         var isFound = false
         
         for condition in conditions {
@@ -147,7 +150,7 @@ class SyntaxAnalyser {
         return false
     }
     
-    func nextAction(condition : (alpha : Int, beta : Int, sign: String, stack: Int?)) {
+    func nextAction(condition : Condition) {
         if condition.beta == BACK {
             currentCondition = stack.removeLast()
         } else {
