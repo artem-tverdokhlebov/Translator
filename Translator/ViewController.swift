@@ -27,7 +27,11 @@ class ViewController: NSViewController {
     @IBAction func buttonClicked(sender: NSButton) {
         let lexAnalyser : LexAnalyser = LexAnalyser(listing: textView.string!)
         
+        print(lexAnalyser.errors)
+        
         let syntaxAnalyser = SyntaxAnalyser(lexemes: lexAnalyser.lexemes)
+        
+        print(syntaxAnalyser.errors)
         
         let rpnGenerator = RPNGenerator(lexemes: lexAnalyser.lexemes)
         

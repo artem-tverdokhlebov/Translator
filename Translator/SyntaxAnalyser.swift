@@ -43,7 +43,7 @@ class SyntaxAnalyser {
         (alpha: 101, beta: 104, sign: "read", stack: nil),
         (alpha: 101, beta: 104, sign: "write", stack: nil),
         (alpha: 101, beta: 107, sign: "do", stack: nil),
-        (alpha: 101, beta: 301, sign: "if", stack: 114),
+        (alpha: 101, beta: 301, sign: "if", stack: 115),
         (alpha: 101, beta: 400, sign: "label", stack: nil),
         
         // Marked operator
@@ -65,13 +65,14 @@ class SyntaxAnalyser {
         (alpha: 109, beta: 200, sign: "by", stack: 110),
         (alpha: 110, beta: 200, sign: "to", stack: 111),
         (alpha: 111, beta: 101, sign: "{", stack: 112),
-        (alpha: 112, beta: 113, sign: "}", stack: nil),
-        (alpha: 113, beta: BACK, sign: ";", stack: nil),
+        (alpha: 112, beta: 101, sign: NO_NAME, stack: 113),
+        (alpha: 113, beta: 114, sign: "}", stack: nil),
+        (alpha: 114, beta: BACK, sign: ";", stack: nil),
         
         // If
-        (alpha: 114, beta: 115, sign: "goto", stack: nil),
-        (alpha: 115, beta: 116, sign: "label", stack: nil),
-        (alpha: 116, beta: BACK, sign: ";", stack: nil),
+        (alpha: 115, beta: 116, sign: "goto", stack: nil),
+        (alpha: 116, beta: 117, sign: "label", stack: nil),
+        (alpha: 117, beta: BACK, sign: ";", stack: nil),
         
         // SubAutomat Expression
         (alpha: 200, beta: 201, sign: "-", stack: nil),

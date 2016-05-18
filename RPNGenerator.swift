@@ -10,12 +10,12 @@ import Foundation
 
 class RPNGenerator {
     var lexemes : [Lexeme]
-    var m : [(name: String, address: Int)] = [(name: String, address: Int)]()
+    var m : [String] = [String]()
     var r : [String] = [(String)]()
     
     var lastLexeme : Lexeme?
     
-    var priorityOperationsTable  = [
+    var priorityOperationsTable : [String : Int] = [
         "read": 0,
         "write": 0,
         "(": 0,
@@ -54,6 +54,12 @@ class RPNGenerator {
     
     internal var RPNstack : [Lexeme]
     var localStack : [Lexeme]
+    
+    let specialIndexes : [String : Int] = [
+        "m" : -1,
+        "m:" : -2,
+        "r" : -3
+    ]
     
     func isArithmeticOrBrackets(index: Int) -> Bool {
         let array : [String] = [
@@ -102,7 +108,7 @@ class RPNGenerator {
             "to",
             "if",
             "goto",
-            "label",
+            ":",
             ":=",
             ",",
             ";",
@@ -125,8 +131,8 @@ class RPNGenerator {
     }
     
     func start() {
-        var RPN = false
-        for lexeme in lexemes {
+        var RPN : Bool = false
+        for lexeme : Lexeme in lexemes {
             if lexeme.name == "begin" {
                 RPN = true
             }
@@ -137,12 +143,12 @@ class RPNGenerator {
             
             
             var stack : String = ""
-            for item in localStack {
+            for item : Lexeme in localStack {
                 stack += item.substring + " "
             }
             
             var RPNstackS : String = ""
-            for item in RPNstack {
+            for item : Lexeme in RPNstack {
                 RPNstackS += item.substring + " "
             }
             
@@ -151,7 +157,7 @@ class RPNGenerator {
     }
     
     func createRPN(lexeme : Lexeme) {
-        if lexeme.name == "idn" || lexeme.name == "con" {
+        if lexeme.name == "idn" || lexeme.name == "con" || lexeme.name == "label" {
             RPNstack.append(lexeme)
             lastLexeme = lexeme
         } else if isArithmeticOrBrackets(lexeme.index) {
@@ -229,10 +235,9 @@ class RPNGenerator {
             
             localStack.append(lexeme)
             
-            m.append((name: "m" + String(m.count + 1), address: 0))
-            m.append((name: "m" + String(m.count + 1), address: 0))
-            m.append((name: "m" + String(m.count + 1), address: 0))
-            
+            m.append("m" + String(m.count + 1))
+            m.append("m" + String(m.count + 1))
+            m.append("m" + String(m.count + 1))
             
             break
             
@@ -242,16 +247,16 @@ class RPNGenerator {
                     RPNstack.append(localStack.removeLast())
             }
             
-            r.append((name: "r" + String(r.count + 1)))
-            RPNstack.append((lineNumber: -1, name: r.last!, substring: r.last!, index: -1))
+            r.append("r" + String(r.count + 1))
+            RPNstack.append((lineNumber: -1, name: r.last!, substring: r.last!, index: specialIndexes["r"]!))
             
-            RPNstack.append((lineNumber: -1, name: "1", substring: "1", index: -1))
-            RPNstack.append((lineNumber: -1, name: ":=", substring: ":=", index: -1))
-            RPNstack.append((lineNumber: -1, name: m[m.count - 3].name, substring: m[m.count - 3].name, index: -1))
-            RPNstack.append((lineNumber: -1, name: ":", substring: ":", index: -1))
+            RPNstack.append((lineNumber: -1, name: "1", substring: "1", index: LexTable.getCode("con")))
+            RPNstack.append((lineNumber: -1, name: ":=", substring: ":=", index: LexTable.getCode(":=")))
             
-            r.append((name: "r" + String(r.count + 1)))
-            RPNstack.append((lineNumber: -1, name: r.last!, substring: r.last!, index: -1))
+            RPNstack.append((lineNumber: -1, name: m[m.count - 3] + ":", substring: m[m.count - 3] + ":", index: specialIndexes["m:"]!))
+            
+            r.append("r" + String(r.count + 1))
+            RPNstack.append((lineNumber: -1, name: r.last!, substring: r.last!, index: specialIndexes["r"]!))
             
             break
             
@@ -261,47 +266,90 @@ class RPNGenerator {
                     RPNstack.append(localStack.removeLast())
             }
             
-            RPNstack.append((lineNumber: -1, name: ":=", substring: ":=", index: -1))
-            RPNstack.append((lineNumber: -1, name: r[r.count - 2], substring: r[r.count - 2], index: -1))
-            RPNstack.append((lineNumber: -1, name: "0", substring: "0", index: -1))
-            RPNstack.append((lineNumber: -1, name: ":=", substring: ":=", index: -1))
-            RPNstack.append((lineNumber: -1, name: m[m.count - 2].name, substring: m[m.count - 2].name, index: -1))
-            RPNstack.append((lineNumber: -1, name: "УПЛ", substring: "УПЛ", index: -1))
-            RPNstack.append((lineNumber: -1, name: cycleParameter, substring: cycleParameter, index: -1))
-            RPNstack.append((lineNumber: -1, name: cycleParameter, substring: cycleParameter, index: -1))
-            RPNstack.append((lineNumber: -1, name: r[r.count - 1], substring: r[r.count - 1], index: -1))
-            RPNstack.append((lineNumber: -1, name: "+", substring: "+", index: -1))
-            RPNstack.append((lineNumber: -1, name: ":=", substring: ":=", index: -1))
-            RPNstack.append((lineNumber: -1, name: m[m.count - 2].name, substring: m[m.count - 2].name, index: -1))
-            RPNstack.append((lineNumber: -1, name: ":", substring: ":", index: -1))
-            RPNstack.append((lineNumber: -1, name: r[r.count - 2], substring: r[r.count - 2], index: -1))
-            RPNstack.append((lineNumber: -1, name: "0", substring: "0", index: -1))
-            RPNstack.append((lineNumber: -1, name: ":=", substring: ":=", index: -1))
-            RPNstack.append((lineNumber: -1, name: cycleParameter, substring: cycleParameter, index: -1))
+            RPNstack.append((lineNumber: -1, name: ":=", substring: ":=", index: LexTable.getCode(":=")))
+            RPNstack.append((lineNumber: -1, name: r[r.count - 2], substring: r[r.count - 2], index: specialIndexes["r"]!))
+            RPNstack.append((lineNumber: -1, name: "0", substring: "0", index: LexTable.getCode("con")))
+            RPNstack.append((lineNumber: -1, name: ":=", substring: ":=", index: LexTable.getCode(":=")))
+            RPNstack.append((lineNumber: -1, name: m[m.count - 2], substring: m[m.count - 2], index: specialIndexes["m"]!))
+            RPNstack.append((lineNumber: -1, name: "УПЛ", substring: "УПЛ", index: 0))
+            RPNstack.append((lineNumber: -1, name: cycleParameter, substring: cycleParameter, index: 0))
+            RPNstack.append((lineNumber: -1, name: cycleParameter, substring: cycleParameter, index: 0))
+            RPNstack.append((lineNumber: -1, name: r[r.count - 1], substring: r[r.count - 1], index: specialIndexes["r"]!))
+            RPNstack.append((lineNumber: -1, name: "+", substring: "+", index: LexTable.getCode("+")))
+            RPNstack.append((lineNumber: -1, name: ":=", substring: ":=", index: LexTable.getCode(":=")))
+            
+            RPNstack.append((lineNumber: -1, name: m[m.count - 2] + ":", substring: m[m.count - 2] + ":", index: specialIndexes["m:"]!))
+            
+            RPNstack.append((lineNumber: -1, name: r[r.count - 2], substring: r[r.count - 2], index: specialIndexes["r"]!))
+            RPNstack.append((lineNumber: -1, name: "0", substring: "0", index: LexTable.getCode("con")))
+            RPNstack.append((lineNumber: -1, name: ":=", substring: ":=", index: LexTable.getCode(":=")))
+            RPNstack.append((lineNumber: -1, name: cycleParameter, substring: cycleParameter, index: 0))
+            break
+            
+        case "{":
+            while !localStack.isEmpty && (priorityOperationsTable[(localStack.last?.name)!] != nil) &&
+                priorityOperationsTable[(localStack.last?.name)!]! >= priorityOperationsTable[lexeme.name]! && localStack.last?.name != "do" {
+                    RPNstack.append(localStack.removeLast())
+            }
+            
+            RPNstack.append((lineNumber: -1, name: "-", substring: "-", index: LexTable.getCode("-")))
+            RPNstack.append((lineNumber: -1, name: r[r.count - 1], substring: r[r.count - 1], index: specialIndexes["r"]!))
+            RPNstack.append((lineNumber: -1, name: "*", substring: "*", index: LexTable.getCode("*")))
+            RPNstack.append((lineNumber: -1, name: "0", substring: "0", index: LexTable.getCode("con")))
+            RPNstack.append((lineNumber: -1, name: "<=", substring: "<=", index: LexTable.getCode("<=")))
+            RPNstack.append((lineNumber: -1, name: m[m.count - 1], substring: m[m.count - 1], index: specialIndexes["m"]!))
+            RPNstack.append((lineNumber: -1, name: "УПЛ", substring: "УПЛ", index: 0))
+            
+            // remove cycle r
+            if r.count >= 2 {
+                r.removeLast(2)
+            }
+            
+            break
+            
+        case "}":
+            //if in cycle
+            
+            while !localStack.isEmpty && (priorityOperationsTable[(localStack.last?.name)!] != nil) &&
+                priorityOperationsTable[(localStack.last?.name)!]! >= priorityOperationsTable[lexeme.name]! && localStack.last?.name != "do" {
+                    RPNstack.append(localStack.removeLast())
+            }
+            
+            if localStack.last?.name == "do" {
+                localStack.removeLast()
+            }
+            
+            RPNstack.append((lineNumber: -1, name: m[m.count - 3], substring: m[m.count - 3], index: specialIndexes["m"]!))
+            RPNstack.append((lineNumber: -1, name: "БП", substring: "БП", index: 0))
+            RPNstack.append((lineNumber: -1, name: m[m.count - 1] + ":", substring: m[m.count - 1] + ":", index: specialIndexes["m:"]!))
+            
+            // remove cycle labels
+            if m.count >= 3 {
+                m.removeLast(3)
+            }
+            
             break
             
         case "if":
-            localStack.append((lineNumber: -1, name: "not", substring: "not", index: LexTable.getCode("not")))
             localStack.append(lexeme)
+            localStack.append((lineNumber: -1, name: "not", substring: "not", index: LexTable.getCode("not")))
+            
             break
             
         case "goto":
             while !localStack.isEmpty && (priorityOperationsTable[(localStack.last?.name)!] != nil) &&
-                priorityOperationsTable[(localStack.last?.name)!]! >= priorityOperationsTable[lexeme.name]! {
-                    if localStack.last?.name != "if" {
-                        RPNstack.append(localStack.removeLast())
-                    } else {
-                        localStack.removeLast()
-                    }
+                priorityOperationsTable[(localStack.last?.name)!]! >= priorityOperationsTable[lexeme.name]! && localStack.last?.name != "if" {
+                    RPNstack.append(localStack.removeLast())
+            }
+            
+            if localStack.last?.name == "if" {
+                localStack.removeLast()
             }
             
             localStack.append((lineNumber: -1, name: "goto", substring: "goto", index: LexTable.getCode("goto")))
             
             
-            break
             
-        case "label":
-            localStack.append(lexeme)
             break
             
         case ":=":
@@ -322,14 +370,29 @@ class RPNGenerator {
             break
             
         case ";":
-            while !localStack.isEmpty {
-                if localStack.last?.name == "goto" {
-                    RPNstack.append((lineNumber: -1, name: "УПЛ", substring: "УПЛ", index: -1))
-                    localStack.removeLast()
-                } else {
+            while !localStack.isEmpty && (priorityOperationsTable[(localStack.last?.name)!] != nil) &&
+                priorityOperationsTable[(localStack.last?.name)!]! >= priorityOperationsTable[lexeme.name]! && localStack.last?.name != "goto" && localStack.last?.name != "do"  {
                     RPNstack.append(localStack.removeLast())
-                }
             }
+            
+            if localStack.last?.name == "goto" {
+                RPNstack.append((lineNumber: -1, name: "УПЛ", substring: "УПЛ", index: 0))
+                localStack.removeLast()
+            }
+            
+            if localStack.last?.name == "do" {
+                //RPNstack.append((lineNumber: -1, name: "УПЛ", substring: "УПЛ", index: -1))
+                localStack.removeLast()
+            }
+            
+            /* while !localStack.isEmpty {
+             if localStack.last?.name == "goto" {
+             RPNstack.append((lineNumber: -1, name: "УПЛ", substring: "УПЛ", index: -1))
+             localStack.removeLast()
+             } else {
+             RPNstack.append(localStack.removeLast())
+             }
+             }*/
             
             break
             
