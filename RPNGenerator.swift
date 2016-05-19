@@ -55,6 +55,8 @@ class RPNGenerator {
     internal var RPNstack : [Lexeme]
     var localStack : [Lexeme]
     
+    var outputTable : [(lexeme: String, stack: String, RPNStack: String)] = [(lexeme: String, stack: String, RPNStack: String)]()
+    
     let specialIndexes : [String : Int] = [
         "m" : -1,
         "m:" : -2,
@@ -140,19 +142,20 @@ class RPNGenerator {
             if RPN {
                 createRPN(lexeme)
             }
+            /*
+             var stack : String = ""
+             for item : Lexeme in localStack {
+             stack += item.substring + " "
+             }
+             
+             var RPNstackS : String = ""
+             for item : Lexeme in RPNstack {
+             RPNstackS += item.substring + " "
+             }
+             */
+            outputTable.append((lexeme: lexeme.substring, stack: localStack.map({"\($0.substring)"}).joinWithSeparator(" "), RPNStack: RPNstack.map({"\($0.substring)"}).joinWithSeparator(" ")))
             
-            
-            var stack : String = ""
-            for item : Lexeme in localStack {
-                stack += item.substring + " "
-            }
-            
-            var RPNstackS : String = ""
-            for item : Lexeme in RPNstack {
-                RPNstackS += item.substring + " "
-            }
-            
-            print(lexeme.substring + "\t\t|\t\t" + stack + "\t\t|\t\t" + RPNstackS + "\n")
+            //print(lexeme.substring + "\t\t|\t\t" + stack + "\t\t|\t\t" + RPNstackS + "\n")
         }
     }
     
@@ -183,8 +186,10 @@ class RPNGenerator {
             }
             
             if !localStack.isEmpty && localStack.last?.substring == "read" {
+                localStack.removeLast()
                 RPNstack.append((lineNumber: -1, name: "read", substring: "read", index: LexTable.getCode("read")))
             } else if !localStack.isEmpty && localStack.last?.substring == "write" {
+                localStack.removeLast()
                 RPNstack.append((lineNumber: -1, name: "write", substring: "write", index: LexTable.getCode("write")))
             }
         } else {
@@ -348,7 +353,16 @@ class RPNGenerator {
             
             localStack.append((lineNumber: -1, name: "goto", substring: "goto", index: LexTable.getCode("goto")))
             
+            break
             
+        case ":":
+            if lastLexeme!.name == "label" {
+                var label = RPNstack.removeLast()
+                label.name += ":"
+                label.substring += ":"
+                
+                RPNstack.append(label)
+            }
             
             break
             
@@ -362,9 +376,11 @@ class RPNGenerator {
             }
             
             break
+            
         case "read":
             localStack.append(lexeme)
             break
+            
         case "write":
             localStack.append(lexeme)
             break
@@ -381,18 +397,8 @@ class RPNGenerator {
             }
             
             if localStack.last?.name == "do" {
-                //RPNstack.append((lineNumber: -1, name: "УПЛ", substring: "УПЛ", index: -1))
                 localStack.removeLast()
             }
-            
-            /* while !localStack.isEmpty {
-             if localStack.last?.name == "goto" {
-             RPNstack.append((lineNumber: -1, name: "УПЛ", substring: "УПЛ", index: -1))
-             localStack.removeLast()
-             } else {
-             RPNstack.append(localStack.removeLast())
-             }
-             }*/
             
             break
             

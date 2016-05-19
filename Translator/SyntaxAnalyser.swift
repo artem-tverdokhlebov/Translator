@@ -105,8 +105,12 @@ class SyntaxAnalyser {
         (alpha: 304, beta: 303, sign: "]", stack: nil)
     ]
     
+    var outputTable : [(current: Int, lexeme: String, substring: String, next: Int, stack: String)] = [(current: Int, lexeme: String, substring: String, next: Int, stack: String)]()
+    
     init(lexemes : [Lexeme]) {
         self.lexemes = lexemes
+        
+        outputTable.append((current: 1, lexeme: "", substring: lexemes[index].substring, next: 2, stack: stack.map({"\($0)"}).joinWithSeparator(", ")))
         
         mainCycle()
     }
@@ -152,6 +156,8 @@ class SyntaxAnalyser {
     }
     
     func nextAction(condition : Condition) {
+        let originalCondition : Int = currentCondition
+        
         if condition.beta == BACK {
             currentCondition = stack.removeLast()
         } else {
@@ -159,6 +165,10 @@ class SyntaxAnalyser {
             if (condition.stack != nil) {
                 stack.append(condition.stack!)
             }
+        }
+        
+        if index < lexemes.count {
+            outputTable.append((current: originalCondition, lexeme: "", substring: lexemes[index].substring, next: currentCondition, stack: stack.map({"\($0)"}).joinWithSeparator(", ")))
         }
     }
 }
