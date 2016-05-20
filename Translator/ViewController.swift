@@ -10,20 +10,32 @@ import Cocoa
 
 class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSource {
     
-    @IBOutlet var codeTextView: NSTextView!
-    @IBOutlet var outputTextView: NSTextView!
+    @IBOutlet var codeTextView : NSTextView!
+    @IBOutlet var outputTextView : NSTextView!
     
-    @IBOutlet weak var lexAnalyserTableView: NSTableView!
-    @IBOutlet weak var syntaxAnalyserTableView: NSTableView!
-    @IBOutlet weak var rpnGeneratorTableView: NSTableView!
+    @IBOutlet weak var lexAnalyserTableView : NSTableView!
+    
+    @IBOutlet weak var idnsTableView : NSTableView!
+    @IBOutlet weak var consTableView : NSTableView!
+    
+    @IBOutlet weak var syntaxAnalyserTableView : NSTableView!
+    @IBOutlet weak var rpnGeneratorTableView : NSTableView!
     
     let controller : Controller = Controller()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        controller.setOutputTextView(outputTextView)
+        
         self.lexAnalyserTableView.setDelegate(self)
         self.lexAnalyserTableView.setDataSource(self)
+        
+        self.idnsTableView.setDelegate(self)
+        self.idnsTableView.setDataSource(self)
+        
+        self.consTableView.setDelegate(self)
+        self.consTableView.setDataSource(self)
         
         self.syntaxAnalyserTableView.setDelegate(self)
         self.syntaxAnalyserTableView.setDataSource(self)
@@ -43,6 +55,10 @@ class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSour
         controller.start()
         
         lexAnalyserTableView.reloadData()
+        
+        idnsTableView.reloadData()
+        consTableView.reloadData()
+        
         syntaxAnalyserTableView.reloadData()
         rpnGeneratorTableView.reloadData()
     }
@@ -58,6 +74,14 @@ class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSour
         
         if tableView == rpnGeneratorTableView && controller.rpnGenerator != nil {
             return controller.rpnGenerator!.outputTable.count
+        }
+        
+        if tableView == idnsTableView && controller.lexAnalyser?.IDNs != nil {
+            return controller.lexAnalyser!.IDNs.count
+        }
+        
+        if tableView == consTableView && controller.lexAnalyser?.CONs != nil {
+            return controller.lexAnalyser!.CONs.count
         }
         
         return 0
@@ -98,26 +122,59 @@ class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSour
             }
             
             return nil
-        } else if tableView == syntaxAnalyserTableView {
-            let item = controller.syntaxAnalyser!.outputTable[row]
+        } else if tableView == lexAnalyserTableView {
+            let item = controller.lexAnalyser!.lexemes[row]
             
             text = ""
             
             if tableColumn == tableView.tableColumns[0] {
-                text = String(item.current)
-                cellIdentifier = "currentCell"
+                text = String(item.lineNumber)
+                cellIdentifier = "lineCell"
             } else if tableColumn == tableView.tableColumns[1] {
-                text = item.lexeme
+                text = item.substring
                 cellIdentifier = "lexemeCell"
             } else if tableColumn == tableView.tableColumns[2] {
-                text = item.substring
-                cellIdentifier = "substringCell"
-            } else if tableColumn == tableView.tableColumns[3] {
-                text = String(item.next)
-                cellIdentifier = "nextCell"
-            } else if tableColumn == tableView.tableColumns[4] {
-                text = item.stack
-                cellIdentifier = "stackCell"
+                text = String(item.index)
+                cellIdentifier = "idCell"
+            }
+            
+            if let cell = tableView.makeViewWithIdentifier(cellIdentifier, owner: nil) as? NSTableCellView {
+                cell.textField?.stringValue = text
+                return cell
+            }
+            
+            return nil
+        } else if tableView == idnsTableView {
+            let item = controller.lexAnalyser!.IDNs[row]
+            
+            text = ""
+            
+            if tableColumn == tableView.tableColumns[0] {
+                text = String(item.index)
+                cellIdentifier = "idCell"
+            } else if tableColumn == tableView.tableColumns[1] {
+                text = item.name
+                cellIdentifier = "nameCell"
+            }
+            
+            if let cell = tableView.makeViewWithIdentifier(cellIdentifier, owner: nil) as? NSTableCellView {
+                cell.textField?.stringValue = text
+                return cell
+            }
+            
+            return nil
+            
+        } else if tableView == consTableView {
+            let item = controller.lexAnalyser!.CONs[row]
+            
+            text = ""
+            
+            if tableColumn == tableView.tableColumns[0] {
+                text = String(item.index)
+                cellIdentifier = "idCell"
+            } else if tableColumn == tableView.tableColumns[1] {
+                text = item.name
+                cellIdentifier = "nameCell"
             }
             
             if let cell = tableView.makeViewWithIdentifier(cellIdentifier, owner: nil) as? NSTableCellView {
@@ -152,6 +209,4 @@ class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSour
         
         return nil
     }
-    
 }
-

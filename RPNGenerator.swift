@@ -10,8 +10,8 @@ import Foundation
 
 class RPNGenerator {
     var lexemes : [Lexeme]
-    var m : [String] = [String]()
-    var r : [String] = [(String)]()
+    var m : [(name: String, address: Int)] = [(name: String, address: Int)]()
+    var r : [(name: String, address: Int)] = [(name: String, address: Int)]()
     
     var lastLexeme : Lexeme?
     
@@ -142,20 +142,8 @@ class RPNGenerator {
             if RPN {
                 createRPN(lexeme)
             }
-            /*
-             var stack : String = ""
-             for item : Lexeme in localStack {
-             stack += item.substring + " "
-             }
-             
-             var RPNstackS : String = ""
-             for item : Lexeme in RPNstack {
-             RPNstackS += item.substring + " "
-             }
-             */
-            outputTable.append((lexeme: lexeme.substring, stack: localStack.map({"\($0.substring)"}).joinWithSeparator(" "), RPNStack: RPNstack.map({"\($0.substring)"}).joinWithSeparator(" ")))
             
-            //print(lexeme.substring + "\t\t|\t\t" + stack + "\t\t|\t\t" + RPNstackS + "\n")
+            outputTable.append((lexeme: lexeme.substring, stack: localStack.map({"\($0.substring)"}).joinWithSeparator(" "), RPNStack: RPNstack.map({"\($0.substring)"}).joinWithSeparator(" ")))
         }
     }
     
@@ -240,9 +228,9 @@ class RPNGenerator {
             
             localStack.append(lexeme)
             
-            m.append("m" + String(m.count + 1))
-            m.append("m" + String(m.count + 1))
-            m.append("m" + String(m.count + 1))
+            m.append((name: "m" + String(m.count + 1), address: -1))
+            m.append((name: "m" + String(m.count + 1), address: -1))
+            m.append((name: "m" + String(m.count + 1), address: -1))
             
             break
             
@@ -252,16 +240,16 @@ class RPNGenerator {
                     RPNstack.append(localStack.removeLast())
             }
             
-            r.append("r" + String(r.count + 1))
-            RPNstack.append((lineNumber: -1, name: r.last!, substring: r.last!, index: specialIndexes["r"]!))
+            r.append((name: "r" + String(r.count + 1), address: -1))
+            RPNstack.append((lineNumber: -1, name: r.last!.name, substring: r.last!.name, index: specialIndexes["r"]!))
             
             RPNstack.append((lineNumber: -1, name: "1", substring: "1", index: LexTable.getCode("con")))
             RPNstack.append((lineNumber: -1, name: ":=", substring: ":=", index: LexTable.getCode(":=")))
             
-            RPNstack.append((lineNumber: -1, name: m[m.count - 3] + ":", substring: m[m.count - 3] + ":", index: specialIndexes["m:"]!))
+            RPNstack.append((lineNumber: -1, name: m[m.count - 3].name + ":", substring: m[m.count - 3].name + ":", index: specialIndexes["m:"]!))
             
-            r.append("r" + String(r.count + 1))
-            RPNstack.append((lineNumber: -1, name: r.last!, substring: r.last!, index: specialIndexes["r"]!))
+            r.append((name: "r" + String(r.count + 1), address: -1))
+            RPNstack.append((lineNumber: -1, name: r.last!.name, substring: r.last!.name, index: specialIndexes["r"]!))
             
             break
             
@@ -272,20 +260,20 @@ class RPNGenerator {
             }
             
             RPNstack.append((lineNumber: -1, name: ":=", substring: ":=", index: LexTable.getCode(":=")))
-            RPNstack.append((lineNumber: -1, name: r[r.count - 2], substring: r[r.count - 2], index: specialIndexes["r"]!))
+            RPNstack.append((lineNumber: -1, name: r[r.count - 2].name, substring: r[r.count - 2].name, index: specialIndexes["r"]!))
             RPNstack.append((lineNumber: -1, name: "0", substring: "0", index: LexTable.getCode("con")))
             RPNstack.append((lineNumber: -1, name: ":=", substring: ":=", index: LexTable.getCode(":=")))
-            RPNstack.append((lineNumber: -1, name: m[m.count - 2], substring: m[m.count - 2], index: specialIndexes["m"]!))
+            RPNstack.append((lineNumber: -1, name: m[m.count - 2].name, substring: m[m.count - 2].name, index: specialIndexes["m"]!))
             RPNstack.append((lineNumber: -1, name: "УПЛ", substring: "УПЛ", index: 0))
             RPNstack.append((lineNumber: -1, name: cycleParameter, substring: cycleParameter, index: 0))
             RPNstack.append((lineNumber: -1, name: cycleParameter, substring: cycleParameter, index: 0))
-            RPNstack.append((lineNumber: -1, name: r[r.count - 1], substring: r[r.count - 1], index: specialIndexes["r"]!))
+            RPNstack.append((lineNumber: -1, name: r[r.count - 1].name, substring: r[r.count - 1].name, index: specialIndexes["r"]!))
             RPNstack.append((lineNumber: -1, name: "+", substring: "+", index: LexTable.getCode("+")))
             RPNstack.append((lineNumber: -1, name: ":=", substring: ":=", index: LexTable.getCode(":=")))
             
-            RPNstack.append((lineNumber: -1, name: m[m.count - 2] + ":", substring: m[m.count - 2] + ":", index: specialIndexes["m:"]!))
+            RPNstack.append((lineNumber: -1, name: m[m.count - 2].name + ":", substring: m[m.count - 2].name + ":", index: specialIndexes["m:"]!))
             
-            RPNstack.append((lineNumber: -1, name: r[r.count - 2], substring: r[r.count - 2], index: specialIndexes["r"]!))
+            RPNstack.append((lineNumber: -1, name: r[r.count - 2].name, substring: r[r.count - 2].name, index: specialIndexes["r"]!))
             RPNstack.append((lineNumber: -1, name: "0", substring: "0", index: LexTable.getCode("con")))
             RPNstack.append((lineNumber: -1, name: ":=", substring: ":=", index: LexTable.getCode(":=")))
             RPNstack.append((lineNumber: -1, name: cycleParameter, substring: cycleParameter, index: 0))
@@ -298,11 +286,11 @@ class RPNGenerator {
             }
             
             RPNstack.append((lineNumber: -1, name: "-", substring: "-", index: LexTable.getCode("-")))
-            RPNstack.append((lineNumber: -1, name: r[r.count - 1], substring: r[r.count - 1], index: specialIndexes["r"]!))
+            RPNstack.append((lineNumber: -1, name: r[r.count - 1].name, substring: r[r.count - 1].name, index: specialIndexes["r"]!))
             RPNstack.append((lineNumber: -1, name: "*", substring: "*", index: LexTable.getCode("*")))
             RPNstack.append((lineNumber: -1, name: "0", substring: "0", index: LexTable.getCode("con")))
             RPNstack.append((lineNumber: -1, name: "<=", substring: "<=", index: LexTable.getCode("<=")))
-            RPNstack.append((lineNumber: -1, name: m[m.count - 1], substring: m[m.count - 1], index: specialIndexes["m"]!))
+            RPNstack.append((lineNumber: -1, name: m[m.count - 1].name, substring: m[m.count - 1].name, index: specialIndexes["m"]!))
             RPNstack.append((lineNumber: -1, name: "УПЛ", substring: "УПЛ", index: 0))
             
             // remove cycle r
@@ -324,9 +312,9 @@ class RPNGenerator {
                 localStack.removeLast()
             }
             
-            RPNstack.append((lineNumber: -1, name: m[m.count - 3], substring: m[m.count - 3], index: specialIndexes["m"]!))
+            RPNstack.append((lineNumber: -1, name: m[m.count - 3].name, substring: m[m.count - 3].name, index: specialIndexes["m"]!))
             RPNstack.append((lineNumber: -1, name: "БП", substring: "БП", index: 0))
-            RPNstack.append((lineNumber: -1, name: m[m.count - 1] + ":", substring: m[m.count - 1] + ":", index: specialIndexes["m:"]!))
+            RPNstack.append((lineNumber: -1, name: m[m.count - 1].name + ":", substring: m[m.count - 1].name + ":", index: specialIndexes["m:"]!))
             
             // remove cycle labels
             if m.count >= 3 {
