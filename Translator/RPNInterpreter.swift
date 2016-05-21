@@ -9,7 +9,7 @@
 import Cocoa
 import Foundation
 
-class Controller {
+class RPNInterpreter {
     
     var listing : String = ""
     
@@ -74,7 +74,7 @@ class Controller {
             } else {
                 switch entry.name {
                 case ">":
-                
+                    
                     break
                 default:
                     break

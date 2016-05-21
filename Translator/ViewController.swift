@@ -21,12 +21,12 @@ class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSour
     @IBOutlet weak var syntaxAnalyserTableView : NSTableView!
     @IBOutlet weak var rpnGeneratorTableView : NSTableView!
     
-    let controller : Controller = Controller()
+    let interpreter : RPNInterpreter = RPNInterpreter()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        controller.setOutputTextView(outputTextView)
+        interpreter.setOutputTextView(outputTextView)
         
         self.lexAnalyserTableView.setDelegate(self)
         self.lexAnalyserTableView.setDataSource(self)
@@ -51,8 +51,8 @@ class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSour
     }
     
     @IBAction func buttonClicked(sender: NSButton) {
-        controller.setListing(codeTextView.string!)
-        controller.start()
+        interpreter.setListing(codeTextView.string!)
+        interpreter.start()
         
         lexAnalyserTableView.reloadData()
         
@@ -64,24 +64,24 @@ class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSour
     }
     
     func numberOfRowsInTableView(tableView: NSTableView) -> Int {
-        if tableView == lexAnalyserTableView && controller.lexAnalyser != nil {
-            return controller.lexAnalyser!.lexemes.count
+        if tableView == lexAnalyserTableView && interpreter.lexAnalyser != nil {
+            return interpreter.lexAnalyser!.lexemes.count
         }
         
-        if tableView == syntaxAnalyserTableView && controller.syntaxAnalyser != nil {
-            return controller.syntaxAnalyser!.outputTable.count
+        if tableView == syntaxAnalyserTableView && interpreter.syntaxAnalyser != nil {
+            return interpreter.syntaxAnalyser!.outputTable.count
         }
         
-        if tableView == rpnGeneratorTableView && controller.rpnGenerator != nil {
-            return controller.rpnGenerator!.outputTable.count
+        if tableView == rpnGeneratorTableView && interpreter.rpnGenerator != nil {
+            return interpreter.rpnGenerator!.outputTable.count
         }
         
-        if tableView == idnsTableView && controller.lexAnalyser?.IDNs != nil {
-            return controller.lexAnalyser!.IDNs.count
+        if tableView == idnsTableView && interpreter.lexAnalyser?.IDNs != nil {
+            return interpreter.lexAnalyser!.IDNs.count
         }
         
-        if tableView == consTableView && controller.lexAnalyser?.CONs != nil {
-            return controller.lexAnalyser!.CONs.count
+        if tableView == consTableView && interpreter.lexAnalyser?.CONs != nil {
+            return interpreter.lexAnalyser!.CONs.count
         }
         
         return 0
@@ -92,7 +92,7 @@ class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSour
         var text : String = ""
         
         if tableView == lexAnalyserTableView {
-            let item = controller.lexAnalyser!.lexemes[row]
+            let item = interpreter.lexAnalyser!.lexemes[row]
             
             text = ""
             
@@ -123,7 +123,7 @@ class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSour
             
             return nil
         } else if tableView == lexAnalyserTableView {
-            let item = controller.lexAnalyser!.lexemes[row]
+            let item = interpreter.lexAnalyser!.lexemes[row]
             
             text = ""
             
@@ -145,7 +145,7 @@ class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSour
             
             return nil
         } else if tableView == idnsTableView {
-            let item = controller.lexAnalyser!.IDNs[row]
+            let item = interpreter.lexAnalyser!.IDNs[row]
             
             text = ""
             
@@ -165,7 +165,7 @@ class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSour
             return nil
             
         } else if tableView == consTableView {
-            let item = controller.lexAnalyser!.CONs[row]
+            let item = interpreter.lexAnalyser!.CONs[row]
             
             text = ""
             
@@ -184,7 +184,7 @@ class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSour
             
             return nil
         } else if tableView == rpnGeneratorTableView {
-            let item = controller.rpnGenerator!.outputTable[row]
+            let item = interpreter.rpnGenerator!.outputTable[row]
             
             text = ""
             

@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		AC3B5F421CE74AC400CB85DE /* RPNGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC3B5F411CE74AC400CB85DE /* RPNGenerator.swift */; };
+		AC2BCB481CF119D300BB27E3 /* RPNGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC2BCB471CF119D300BB27E3 /* RPNGenerator.swift */; };
 		AC4741681CD62EFC005A58B8 /* code.txt in Resources */ = {isa = PBXBuildFile; fileRef = AC4741671CD62EFC005A58B8 /* code.txt */; };
 		AC63BBED1CD0259F00631CD0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC63BBEC1CD0259F00631CD0 /* AppDelegate.swift */; };
 		AC63BBEF1CD0259F00631CD0 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC63BBEE1CD0259F00631CD0 /* ViewController.swift */; };
@@ -16,11 +16,11 @@
 		AC63BBFC1CD02AFA00631CD0 /* LexAnalyser.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC63BBFB1CD02AFA00631CD0 /* LexAnalyser.swift */; };
 		AC63BBFE1CD02FA600631CD0 /* LexTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC63BBFD1CD02FA600631CD0 /* LexTable.swift */; };
 		ACF5A3721CDAA7EA0013395C /* SyntaxAnalyser.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACBE33151CDA455900FF1B34 /* SyntaxAnalyser.swift */; };
-		ACFCF7061CECB77900D6D4A3 /* Controller.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACFCF7051CECB77900D6D4A3 /* Controller.swift */; };
+		ACFCF7061CECB77900D6D4A3 /* RPNInterpreter.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACFCF7051CECB77900D6D4A3 /* RPNInterpreter.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		AC3B5F411CE74AC400CB85DE /* RPNGenerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = RPNGenerator.swift; path = ../RPNGenerator.swift; sourceTree = "<group>"; };
+		AC2BCB471CF119D300BB27E3 /* RPNGenerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RPNGenerator.swift; sourceTree = "<group>"; };
 		AC4741671CD62EFC005A58B8 /* code.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = code.txt; sourceTree = "<group>"; };
 		AC63BBE91CD0259F00631CD0 /* Translator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Translator.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AC63BBEC1CD0259F00631CD0 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -31,7 +31,7 @@
 		AC63BBFB1CD02AFA00631CD0 /* LexAnalyser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LexAnalyser.swift; sourceTree = "<group>"; };
 		AC63BBFD1CD02FA600631CD0 /* LexTable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LexTable.swift; sourceTree = "<group>"; };
 		ACBE33151CDA455900FF1B34 /* SyntaxAnalyser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyntaxAnalyser.swift; sourceTree = "<group>"; };
-		ACFCF7051CECB77900D6D4A3 /* Controller.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Controller.swift; sourceTree = "<group>"; };
+		ACFCF7051CECB77900D6D4A3 /* RPNInterpreter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RPNInterpreter.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -72,9 +72,9 @@
 				AC63BBFD1CD02FA600631CD0 /* LexTable.swift */,
 				AC63BBFB1CD02AFA00631CD0 /* LexAnalyser.swift */,
 				ACBE33151CDA455900FF1B34 /* SyntaxAnalyser.swift */,
-				AC3B5F411CE74AC400CB85DE /* RPNGenerator.swift */,
 				AC4741671CD62EFC005A58B8 /* code.txt */,
-				ACFCF7051CECB77900D6D4A3 /* Controller.swift */,
+				ACFCF7051CECB77900D6D4A3 /* RPNInterpreter.swift */,
+				AC2BCB471CF119D300BB27E3 /* RPNGenerator.swift */,
 			);
 			path = Translator;
 			sourceTree = "<group>";
@@ -151,12 +151,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				ACF5A3721CDAA7EA0013395C /* SyntaxAnalyser.swift in Sources */,
+				AC2BCB481CF119D300BB27E3 /* RPNGenerator.swift in Sources */,
 				AC63BBFC1CD02AFA00631CD0 /* LexAnalyser.swift in Sources */,
 				AC63BBEF1CD0259F00631CD0 /* ViewController.swift in Sources */,
 				AC63BBFE1CD02FA600631CD0 /* LexTable.swift in Sources */,
-				AC3B5F421CE74AC400CB85DE /* RPNGenerator.swift in Sources */,
 				AC63BBED1CD0259F00631CD0 /* AppDelegate.swift in Sources */,
-				ACFCF7061CECB77900D6D4A3 /* Controller.swift in Sources */,
+				ACFCF7061CECB77900D6D4A3 /* RPNInterpreter.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
