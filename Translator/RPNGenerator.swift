@@ -145,6 +145,14 @@ class RPNGenerator {
             
             outputTable.append((lexeme: lexeme.substring, stack: localStack.map({"\($0.substring)"}).joinWithSeparator(" "), RPNStack: RPNstack.map({"\($0.substring)"}).joinWithSeparator(" ")))
         }
+        
+        var i = 0
+        for item in RPNstack {
+            i += 1
+            if item.index == specialIndexes["m:"] {
+                m.append((name: item.substring, address: i))
+            }
+        }
     }
     
     func createRPN(lexeme : Lexeme) {

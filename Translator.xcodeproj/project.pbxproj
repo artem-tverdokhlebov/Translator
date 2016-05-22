@@ -49,7 +49,6 @@
 			isa = PBXGroup;
 			children = (
 				AC63BBEB1CD0259F00631CD0 /* Translator */,
-				AC63BBEA1CD0259F00631CD0 /* Products */,
 			);
 			sourceTree = "<group>";
 		};
@@ -59,6 +58,7 @@
 				AC63BBE91CD0259F00631CD0 /* Translator.app */,
 			);
 			name = Products;
+			path = ..;
 			sourceTree = "<group>";
 		};
 		AC63BBEB1CD0259F00631CD0 /* Translator */ = {
@@ -73,8 +73,9 @@
 				AC63BBFB1CD02AFA00631CD0 /* LexAnalyser.swift */,
 				ACBE33151CDA455900FF1B34 /* SyntaxAnalyser.swift */,
 				AC4741671CD62EFC005A58B8 /* code.txt */,
-				ACFCF7051CECB77900D6D4A3 /* RPNInterpreter.swift */,
 				AC2BCB471CF119D300BB27E3 /* RPNGenerator.swift */,
+				ACFCF7051CECB77900D6D4A3 /* RPNInterpreter.swift */,
+				AC63BBEA1CD0259F00631CD0 /* Products */,
 			);
 			path = Translator;
 			sourceTree = "<group>";

@@ -113,7 +113,7 @@ class LexAnalyser {
 }
 
 extension LexAnalyser {
-    func condition1( parts : [String], lineNumber : Int) {
+    func condition1(parts : [String], lineNumber : Int) {
         var parts = parts
         
         if parts.count == 0 {
@@ -314,7 +314,7 @@ extension LexAnalyser {
             if isSignifier(parts[0]) {
                 _result += parts[currentPosition]
                 currentPosition += 1
-                condition7(result, parts: cutString(parts, position: currentPosition), lineNumber: lineNumber)
+                condition7(_result, parts: cutString(parts, position: currentPosition), lineNumber: lineNumber)
                 
                 return
             }
@@ -324,7 +324,7 @@ extension LexAnalyser {
             if isNumber(parts[0]) {
                 _result += parts[currentPosition];
                 currentPosition += 1
-                condition8(result, parts: cutString(parts, position: currentPosition), lineNumber: lineNumber)
+                condition8(_result, parts: cutString(parts, position: currentPosition), lineNumber: lineNumber)
                 return
             }
         }
