@@ -13,6 +13,11 @@ class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSour
     @IBOutlet var codeTextView : NSTextView!
     @IBOutlet var outputTextView : NSTextView!
     
+    
+    @IBOutlet weak var lexIndicator: NSProgressIndicator!
+    @IBOutlet weak var syntaxIndicator: NSProgressIndicator!
+    @IBOutlet weak var rpnInterpreterIndicator: NSProgressIndicator!
+    
     @IBOutlet weak var lexAnalyserTableView : NSTableView!
     
     @IBOutlet weak var idnsTableView : NSTableView!
@@ -21,12 +26,10 @@ class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSour
     @IBOutlet weak var syntaxAnalyserTableView : NSTableView!
     @IBOutlet weak var rpnGeneratorTableView : NSTableView!
     
-    let interpreter : RPNInterpreter = RPNInterpreter()
+    var interpreter : RPNInterpreter?
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        interpreter.setOutputTextView(outputTextView)
         
         self.lexAnalyserTableView.setDelegate(self)
         self.lexAnalyserTableView.setDataSource(self)
@@ -51,8 +54,10 @@ class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSour
     }
     
     @IBAction func buttonClicked(sender: NSButton) {
-        interpreter.setListing(codeTextView.string!)
-        interpreter.start()
+        interpreter = RPNInterpreter(viewController: self)
+        
+        interpreter!.setListing(codeTextView.string!)
+        interpreter!.start()
         
         lexAnalyserTableView.reloadData()
         
@@ -64,26 +69,27 @@ class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSour
     }
     
     func numberOfRowsInTableView(tableView: NSTableView) -> Int {
-        if tableView == lexAnalyserTableView && interpreter.lexAnalyser != nil {
-            return interpreter.lexAnalyser!.lexemes.count
+        if interpreter != nil {
+            if tableView == lexAnalyserTableView && interpreter!.lexAnalyser != nil {
+                return interpreter!.lexAnalyser!.lexemes.count
+            }
+            
+            if tableView == syntaxAnalyserTableView && interpreter!.syntaxAnalyser != nil {
+                return interpreter!.syntaxAnalyser!.outputTable.count
+            }
+            
+            if tableView == rpnGeneratorTableView && interpreter!.rpnGenerator != nil {
+                return interpreter!.rpnGenerator!.outputTable.count
+            }
+            
+            if tableView == idnsTableView && interpreter!.lexAnalyser?.IDNs != nil {
+                return interpreter!.lexAnalyser!.IDNs.count
+            }
+            
+            if tableView == consTableView && interpreter!.lexAnalyser?.CONs != nil {
+                return interpreter!.lexAnalyser!.CONs.count
+            }
         }
-        
-        if tableView == syntaxAnalyserTableView && interpreter.syntaxAnalyser != nil {
-            return interpreter.syntaxAnalyser!.outputTable.count
-        }
-        
-        if tableView == rpnGeneratorTableView && interpreter.rpnGenerator != nil {
-            return interpreter.rpnGenerator!.outputTable.count
-        }
-        
-        if tableView == idnsTableView && interpreter.lexAnalyser?.IDNs != nil {
-            return interpreter.lexAnalyser!.IDNs.count
-        }
-        
-        if tableView == consTableView && interpreter.lexAnalyser?.CONs != nil {
-            return interpreter.lexAnalyser!.CONs.count
-        }
-        
         return 0
     }
     
@@ -91,120 +97,122 @@ class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSour
         var cellIdentifier : String = ""
         var text : String = ""
         
-        if tableView == lexAnalyserTableView {
-            let item = interpreter.lexAnalyser!.lexemes[row]
-            
-            text = ""
-            
-            if tableColumn == tableView.tableColumns[0] {
-                text = String(item.lineNumber)
-                cellIdentifier = "lineCell"
-            } else if tableColumn == tableView.tableColumns[1] {
-                text = item.substring
-                cellIdentifier = "lexemeCell"
-            } else if tableColumn == tableView.tableColumns[2] {
-                text = String(item.index)
-                cellIdentifier = "idCell"
-            } else if tableColumn == tableView.tableColumns[3] {
-                if item.index == LexTable.getCode("con") {
-                    text = "con"
-                } else if item.index == LexTable.getCode("idn") {
-                    text = "idn"
-                } else if item.index == LexTable.getCode("label") {
-                    text = "label"
+        if interpreter != nil {
+            if tableView == lexAnalyserTableView {
+                let item = interpreter!.lexAnalyser!.lexemes[row]
+                
+                text = ""
+                
+                if tableColumn == tableView.tableColumns[0] {
+                    text = String(item.lineNumber)
+                    cellIdentifier = "lineCell"
+                } else if tableColumn == tableView.tableColumns[1] {
+                    text = item.substring
+                    cellIdentifier = "lexemeCell"
+                } else if tableColumn == tableView.tableColumns[2] {
+                    text = String(item.index)
+                    cellIdentifier = "idCell"
+                } else if tableColumn == tableView.tableColumns[3] {
+                    if item.index == LexTable.getCode("con") {
+                        text = "con"
+                    } else if item.index == LexTable.getCode("idn") {
+                        text = "idn"
+                    } else if item.index == LexTable.getCode("label") {
+                        text = "label"
+                    }
+                    cellIdentifier = "typeCell"
                 }
-                cellIdentifier = "typeCell"
+                
+                if let cell = tableView.makeViewWithIdentifier(cellIdentifier, owner: nil) as? NSTableCellView {
+                    cell.textField?.stringValue = text
+                    return cell
+                }
+                
+                return nil
+            } else if tableView == lexAnalyserTableView {
+                let item = interpreter!.lexAnalyser!.lexemes[row]
+                
+                text = ""
+                
+                if tableColumn == tableView.tableColumns[0] {
+                    text = String(item.lineNumber)
+                    cellIdentifier = "lineCell"
+                } else if tableColumn == tableView.tableColumns[1] {
+                    text = item.substring
+                    cellIdentifier = "lexemeCell"
+                } else if tableColumn == tableView.tableColumns[2] {
+                    text = String(item.index)
+                    cellIdentifier = "idCell"
+                }
+                
+                if let cell = tableView.makeViewWithIdentifier(cellIdentifier, owner: nil) as? NSTableCellView {
+                    cell.textField?.stringValue = text
+                    return cell
+                }
+                
+                return nil
+            } else if tableView == idnsTableView {
+                let item = interpreter!.lexAnalyser!.IDNs[row]
+                
+                text = ""
+                
+                if tableColumn == tableView.tableColumns[0] {
+                    text = String(item.index)
+                    cellIdentifier = "idCell"
+                } else if tableColumn == tableView.tableColumns[1] {
+                    text = item.name
+                    cellIdentifier = "nameCell"
+                }
+                
+                if let cell = tableView.makeViewWithIdentifier(cellIdentifier, owner: nil) as? NSTableCellView {
+                    cell.textField?.stringValue = text
+                    return cell
+                }
+                
+                return nil
+                // TODO: syntax analyser table
+            } else if tableView == consTableView {
+                let item = interpreter!.lexAnalyser!.CONs[row]
+                
+                text = ""
+                
+                if tableColumn == tableView.tableColumns[0] {
+                    text = String(item.index)
+                    cellIdentifier = "idCell"
+                } else if tableColumn == tableView.tableColumns[1] {
+                    text = item.name
+                    cellIdentifier = "nameCell"
+                }
+                
+                if let cell = tableView.makeViewWithIdentifier(cellIdentifier, owner: nil) as? NSTableCellView {
+                    cell.textField?.stringValue = text
+                    return cell
+                }
+                
+                return nil
+            } else if tableView == rpnGeneratorTableView {
+                let item = interpreter!.rpnGenerator!.outputTable[row]
+                
+                text = ""
+                
+                if tableColumn == tableView.tableColumns[0] {
+                    text = item.lexeme
+                    cellIdentifier = "lexemeCell"
+                } else if tableColumn == tableView.tableColumns[1] {
+                    text = item.stack
+                    cellIdentifier = "stackCell"
+                } else if tableColumn == tableView.tableColumns[2] {
+                    text = item.RPNStack
+                    cellIdentifier = "rpnCell"
+                }
+                
+                if let cell = tableView.makeViewWithIdentifier(cellIdentifier, owner: nil) as? NSTableCellView {
+                    cell.textField?.stringValue = text
+                    return cell
+                }
+                
+                return nil
             }
-            
-            if let cell = tableView.makeViewWithIdentifier(cellIdentifier, owner: nil) as? NSTableCellView {
-                cell.textField?.stringValue = text
-                return cell
-            }
-            
-            return nil
-        } else if tableView == lexAnalyserTableView {
-            let item = interpreter.lexAnalyser!.lexemes[row]
-            
-            text = ""
-            
-            if tableColumn == tableView.tableColumns[0] {
-                text = String(item.lineNumber)
-                cellIdentifier = "lineCell"
-            } else if tableColumn == tableView.tableColumns[1] {
-                text = item.substring
-                cellIdentifier = "lexemeCell"
-            } else if tableColumn == tableView.tableColumns[2] {
-                text = String(item.index)
-                cellIdentifier = "idCell"
-            }
-            
-            if let cell = tableView.makeViewWithIdentifier(cellIdentifier, owner: nil) as? NSTableCellView {
-                cell.textField?.stringValue = text
-                return cell
-            }
-            
-            return nil
-        } else if tableView == idnsTableView {
-            let item = interpreter.lexAnalyser!.IDNs[row]
-            
-            text = ""
-            
-            if tableColumn == tableView.tableColumns[0] {
-                text = String(item.index)
-                cellIdentifier = "idCell"
-            } else if tableColumn == tableView.tableColumns[1] {
-                text = item.name
-                cellIdentifier = "nameCell"
-            }
-            
-            if let cell = tableView.makeViewWithIdentifier(cellIdentifier, owner: nil) as? NSTableCellView {
-                cell.textField?.stringValue = text
-                return cell
-            }
-            
-            return nil
-            
-        } else if tableView == consTableView {
-            let item = interpreter.lexAnalyser!.CONs[row]
-            
-            text = ""
-            
-            if tableColumn == tableView.tableColumns[0] {
-                text = String(item.index)
-                cellIdentifier = "idCell"
-            } else if tableColumn == tableView.tableColumns[1] {
-                text = item.name
-                cellIdentifier = "nameCell"
-            }
-            
-            if let cell = tableView.makeViewWithIdentifier(cellIdentifier, owner: nil) as? NSTableCellView {
-                cell.textField?.stringValue = text
-                return cell
-            }
-            
-            return nil
-        } else if tableView == rpnGeneratorTableView {
-            let item = interpreter.rpnGenerator!.outputTable[row]
-            
-            text = ""
-            
-            if tableColumn == tableView.tableColumns[0] {
-                text = item.lexeme
-                cellIdentifier = "lexemeCell"
-            } else if tableColumn == tableView.tableColumns[1] {
-                text = item.stack
-                cellIdentifier = "stackCell"
-            } else if tableColumn == tableView.tableColumns[2] {
-                text = item.RPNStack
-                cellIdentifier = "rpnCell"
-            }
-            
-            if let cell = tableView.makeViewWithIdentifier(cellIdentifier, owner: nil) as? NSTableCellView {
-                cell.textField?.stringValue = text
-                return cell
-            }
-            
-            return nil
         }
         
         return nil

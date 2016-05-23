@@ -71,7 +71,7 @@ class LexAnalyser {
             output = regex.stringByReplacingMatchesInString(output, options: .WithTransparentBounds, range: NSMakeRange(0, output.characters.count), withTemplate: " ")
         }
         
-        return output.stringByTrimmingCharactersInSet(NSCharacterSet(charactersInString: " "))
+        return output.stringByTrimmingCharactersInSet(NSCharacterSet(charactersInString: " \t"))
     }
     
     func isLetter(char : String) -> Bool {
@@ -174,7 +174,7 @@ extension LexAnalyser {
             return
         }
         
-        if parts[0] == " " {
+        if parts[0] == " " || parts[0] == "\t" {
             parts.removeAtIndex(0)
             condition1(parts, lineNumber: lineNumber)
             return
