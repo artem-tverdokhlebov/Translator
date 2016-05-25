@@ -9,6 +9,10 @@
 import Cocoa
 import Foundation
 
+enum InterpreterError: ErrorType {
+    case NilException(variable: String)
+}
+
 class RPNInterpreter {
     
     var listing : String = ""
@@ -19,6 +23,8 @@ class RPNInterpreter {
     
     var viewController : ViewController
     
+    var output : String = ""
+    
     internal var IDNs : [String : (index: Int, name: String, value: Float?)] = [String : (index: Int, name: String, value: Float?)]()
     internal var CONs : [String : (index: Int, name: String, value: Float)] = [String : (index: Int, name: String, value: Float)]()
     
@@ -28,61 +34,46 @@ class RPNInterpreter {
     
     init(viewController : ViewController) {
         self.viewController = viewController
-        viewController.outputTextView.string = ""
+        output = ""
     }
     
     func start() {
-        viewController.lexIndicator.startAnimation(self)
-        
         lexAnalyser = LexAnalyser(listing: self.listing)
         
-        viewController.lexIndicator.stopAnimation(self)
-        
         if lexAnalyser!.errors.count > 0 {
-            print(lexAnalyser!.errors)
-            
-            viewController.outputTextView!.string = viewController.outputTextView!.string! + "Lexeme analyser errors:\n"
-            
-            for e in lexAnalyser!.errors {
-                viewController.outputTextView!.string = viewController.outputTextView!.string! + "\n" + e
-            }
+            output += "\nLexeme analyser errors:\n" + (lexAnalyser!.errors).joinWithSeparator("\n")
         }
         
         if lexAnalyser!.errors.count == 0 {
-            viewController.syntaxIndicator.startAnimation(self)
-            
             syntaxAnalyser = SyntaxAnalyser(lexemes: lexAnalyser!.lexemes)
             
-            viewController.syntaxIndicator.stopAnimation(self)
-            
             if syntaxAnalyser!.errors.count > 0 {
-                viewController.outputTextView!.string = viewController.outputTextView!.string! + "Syntax analyser errors:\n"
-                
-                for e in syntaxAnalyser!.errors {
-                    viewController.outputTextView!.string = viewController.outputTextView!.string! + "\n" + e
-                }
+                output += "\nSyntax analyser errors:\n" + (syntaxAnalyser!.errors).joinWithSeparator("\n")
             }
             
             if syntaxAnalyser!.errors.count == 0 {
-                viewController.rpnInterpreterIndicator.startAnimation(self)
-                
                 rpnGenerator = RPNGenerator(lexemes: lexAnalyser!.lexemes)
                 
                 for item in lexAnalyser!.IDNs {
-                    IDNs[item.name] = (index: item.index, name: item.name, value: 0)
+                    IDNs[item.name] = (index: item.index, name: item.name, value: nil)
                 }
                 
                 IDNs["r1"] = (index: LexTable.getCode("idn"), name: "r1", value: 0)
                 IDNs["r2"] = (index: LexTable.getCode("idn"), name: "r2", value: 0)
                 
-                operations()
-                
-                viewController.rpnInterpreterIndicator.stopAnimation(self)
+                do {
+                    try operations()
+                } catch InterpreterError.NilException(let variable) {
+                    output += "\nError: \(variable) wasn't initialized"
+                } catch {
+                    output += "Unknown error"
+                }
             }
         }
     }
     
-    func inputReal(IDN : String) -> Float {
+    
+    private func inputReal(IDN : String) -> Float {
         let alert: NSAlert = NSAlert()
         alert.icon = nil
         alert.messageText = "Input value of \(IDN):"
@@ -91,7 +82,7 @@ class RPNInterpreter {
         input.stringValue = ""
         
         alert.accessoryView = input
-        let button: Int = alert.runModal()
+        let button: Int = alert.runModalSheet()
         if button == NSAlertFirstButtonReturn {
             return input.floatValue
         } else {
@@ -99,10 +90,15 @@ class RPNInterpreter {
         }
     }
     
-    func operations() {
+    func operations() throws {
         var stack : [Lexeme] = [Lexeme]()
-        var realValue : Float = 0.0
         var boolValue : Bool = false
+        
+        let formatter = NSNumberFormatter()
+        formatter.maximumFractionDigits = 8
+        formatter.minimumFractionDigits = 1
+        formatter.minimumSignificantDigits = 1
+        formatter.numberStyle = .DecimalStyle
         
         for(var i : Int = 0; i < rpnGenerator!.RPNstack.count; i += 1) {
             let entry = rpnGenerator!.RPNstack[i]
@@ -112,55 +108,108 @@ class RPNInterpreter {
             } else {
                 switch entry.name {
                 case ">":
-                    let r2 : Float? = ((stack.first?.name)! == "con") ? (stack.removeFirst().substring as NSString).floatValue : IDNs[stack.removeFirst().substring]!.value
-                    let r1 : Float? = ((stack.first?.name)! == "con") ? (stack.removeFirst().substring as NSString).floatValue : IDNs[stack.removeFirst().substring]!.value
+                    guard let r2 : Float? = ((stack.first?.name)! == "con") ? (stack.first!.substring as NSString).floatValue : IDNs[stack.first!.substring]!.value where r2 != nil else {
+                        throw InterpreterError.NilException(variable: stack.first!.substring)
+                    }
                     
-                    boolValue = r1 > r2
+                    stack.removeFirst()
+                    
+                    guard let r1 : Float? = ((stack.first?.name)! == "con") ? (stack.first!.substring as NSString).floatValue : IDNs[stack.first!.substring]!.value where r1 != nil else {
+                        throw InterpreterError.NilException(variable: stack.first!.substring)
+                    }
+                    
+                    stack.removeFirst()
+                    
+                    boolValue = r1! > r2!
                     stack.insert((lineNumber: -1, name: boolValue.description, substring: boolValue.description, index: 0), atIndex: 0)
                     
                     break
                 case "<":
-                    let r2 : Float? = ((stack.first?.name)! == "con") ? (stack.removeFirst().substring as NSString).floatValue : IDNs[stack.removeFirst().substring]!.value
-                    let r1 : Float? = ((stack.first?.name)! == "con") ? (stack.removeFirst().substring as NSString).floatValue : IDNs[stack.removeFirst().substring]!.value
+                    guard let r2 : Float? = ((stack.first?.name)! == "con") ? (stack.first!.substring as NSString).floatValue : IDNs[stack.first!.substring]!.value where r2 != nil else {
+                        throw InterpreterError.NilException(variable: stack.first!.substring)
+                    }
                     
-                    boolValue = r1 < r2
+                    stack.removeFirst()
+                    
+                    guard let r1 : Float? = ((stack.first?.name)! == "con") ? (stack.first!.substring as NSString).floatValue : IDNs[stack.first!.substring]!.value where r1 != nil else {
+                        throw InterpreterError.NilException(variable: stack.first!.substring)
+                    }
+                    
+                    stack.removeFirst()
+                    
+                    boolValue = r1! < r2!
                     stack.insert((lineNumber: -1, name: boolValue.description, substring: boolValue.description, index: 0), atIndex: 0)
                     
                     break
                 case "<=":
-                    let r2 : Float? = ((stack.first?.name)! == "con") ? (stack.removeFirst().substring as NSString).floatValue : IDNs[stack.removeFirst().substring]!.value
-                    let r1 : Float? = ((stack.first?.name)! == "con") ? (stack.removeFirst().substring as NSString).floatValue : IDNs[stack.removeFirst().substring]!.value
+                    guard let r2 : Float? = ((stack.first?.name)! == "con") ? (stack.first!.substring as NSString).floatValue : IDNs[stack.first!.substring]!.value where r2 != nil else {
+                        throw InterpreterError.NilException(variable: stack.first!.substring)
+                    }
                     
-                    boolValue = r1 <= r2
+                    stack.removeFirst()
+                    
+                    guard let r1 : Float? = ((stack.first?.name)! == "con") ? (stack.first!.substring as NSString).floatValue : IDNs[stack.first!.substring]!.value where r1 != nil else {
+                        throw InterpreterError.NilException(variable: stack.first!.substring)
+                    }
+                    
+                    stack.removeFirst()
+                    
+                    boolValue = r1! <= r2!
                     stack.insert((lineNumber: -1, name: boolValue.description, substring: boolValue.description, index: 0), atIndex: 0)
                     
                     break
                 case ">=":
-                    let r2 : Float? = ((stack.first?.name)! == "con") ? (stack.removeFirst().substring as NSString).floatValue : IDNs[stack.removeFirst().substring]!.value
-                    let r1 : Float? = ((stack.first?.name)! == "con") ? (stack.removeFirst().substring as NSString).floatValue : IDNs[stack.removeFirst().substring]!.value
+                    guard let r2 : Float? = ((stack.first?.name)! == "con") ? (stack.first!.substring as NSString).floatValue : IDNs[stack.first!.substring]!.value where r2 != nil else {
+                        throw InterpreterError.NilException(variable: stack.first!.substring)
+                    }
                     
-                    boolValue = r1 >= r2
+                    stack.removeFirst()
+                    
+                    guard let r1 : Float? = ((stack.first?.name)! == "con") ? (stack.first!.substring as NSString).floatValue : IDNs[stack.first!.substring]!.value where r1 != nil else {
+                        throw InterpreterError.NilException(variable: stack.first!.substring)
+                    }
+                    
+                    stack.removeFirst()
+                    
+                    boolValue = r1! >= r2!
                     stack.insert((lineNumber: -1, name: boolValue.description, substring: boolValue.description, index: 0), atIndex: 0)
                     
                     break
                 case "=":
-                    let r2 : Float? = ((stack.first?.name)! == "con") ? (stack.removeFirst().substring as NSString).floatValue : IDNs[stack.removeFirst().substring]!.value
-                    let r1 : Float? = ((stack.first?.name)! == "con") ? (stack.removeFirst().substring as NSString).floatValue : IDNs[stack.removeFirst().substring]!.value
+                    guard let r2 : Float? = ((stack.first?.name)! == "con") ? (stack.first!.substring as NSString).floatValue : IDNs[stack.first!.substring]!.value where r2 != nil else {
+                        throw InterpreterError.NilException(variable: stack.first!.substring)
+                    }
                     
-                    boolValue = r1 == r2
+                    stack.removeFirst()
+                    
+                    guard let r1 : Float? = ((stack.first?.name)! == "con") ? (stack.first!.substring as NSString).floatValue : IDNs[stack.first!.substring]!.value where r1 != nil else {
+                        throw InterpreterError.NilException(variable: stack.first!.substring)
+                    }
+                    
+                    stack.removeFirst()
+                    
+                    boolValue = r1! == r2!
                     stack.insert((lineNumber: -1, name: boolValue.description, substring: boolValue.description, index: 0), atIndex: 0)
                     
                     break
                 case "!=":
-                    let r2 : Float? = ((stack.first?.name)! == "con") ? (stack.removeFirst().substring as NSString).floatValue : IDNs[stack.removeFirst().substring]!.value
-                    let r1 : Float? = ((stack.first?.name)! == "con") ? (stack.removeFirst().substring as NSString).floatValue : IDNs[stack.removeFirst().substring]!.value
+                    guard let r2 : Float? = ((stack.first?.name)! == "con") ? (stack.first!.substring as NSString).floatValue : IDNs[stack.first!.substring]!.value where r2 != nil else {
+                        throw InterpreterError.NilException(variable: stack.first!.substring)
+                    }
                     
-                    boolValue = r1 != r2
+                    stack.removeFirst()
+                    
+                    guard let r1 : Float? = ((stack.first?.name)! == "con") ? (stack.first!.substring as NSString).floatValue : IDNs[stack.first!.substring]!.value where r1 != nil else {
+                        throw InterpreterError.NilException(variable: stack.first!.substring)
+                    }
+                    
+                    stack.removeFirst()
+                    
+                    boolValue = r1! != r2!
                     stack.insert((lineNumber: -1, name: boolValue.description, substring: boolValue.description, index: 0), atIndex: 0)
                     
                     break
                 case "not":
-                    print(stack)
                     boolValue = (stack.removeFirst().name as NSString).boolValue
                     
                     stack.insert((lineNumber: -1, name: (!boolValue).description, substring: (!boolValue).description, index: 0), atIndex: 0)
@@ -183,51 +232,91 @@ class RPNInterpreter {
                     
                     break
                 case "+":
-                    let r2 : Float = ((stack.first?.name)! == "con") ? (stack.removeFirst().substring as NSString).floatValue : IDNs[stack.removeFirst().substring]!.value!
+                    guard let r2 : Float? = ((stack.first?.name)! == "con") ? (stack.first!.substring as NSString).floatValue : IDNs[stack.first!.substring]!.value where r2 != nil else {
+                        throw InterpreterError.NilException(variable: stack.first!.substring)
+                    }
                     
-                    realValue = (((stack.first?.name)! == "con") ? (stack.removeFirst().substring as NSString).floatValue : IDNs[stack.removeFirst().substring]!.value!)
+                    stack.removeFirst()
                     
-                    realValue += r2
-                    stack.insert((lineNumber: -1, name: "con", substring: realValue.description, index: LexTable.getCode("con")), atIndex: 0)
+                    guard var realValue : Float? = ((stack.first?.name)! == "con") ? (stack.first!.substring as NSString).floatValue : IDNs[stack.first!.substring]!.value where realValue != nil else {
+                        throw InterpreterError.NilException(variable: stack.first!.substring)
+                    }
+                    
+                    stack.removeFirst()
+                    
+                    realValue = realValue! + r2!
+                    stack.insert((lineNumber: -1, name: "con", substring: realValue!.description, index: LexTable.getCode("con")), atIndex: 0)
                     
                     break
                 case "-":
-                    let r2 : Float = ((stack.first?.name)! == "con") ? (stack.removeFirst().substring as NSString).floatValue : IDNs[stack.removeFirst().substring]!.value!
+                    guard let r2 : Float? = ((stack.first?.name)! == "con") ? (stack.first!.substring as NSString).floatValue : IDNs[stack.first!.substring]!.value where r2 != nil else {
+                        throw InterpreterError.NilException(variable: stack.first!.substring)
+                    }
                     
-                    realValue = (((stack.first?.name)! == "con") ? (stack.removeFirst().substring as NSString).floatValue : IDNs[stack.removeFirst().substring]!.value!)
+                    stack.removeFirst()
                     
-                    realValue -= r2
-                    stack.insert((lineNumber: -1, name: "con", substring: realValue.description, index: LexTable.getCode("con")), atIndex: 0)
+                    guard var realValue : Float? = (((stack.first?.name)! == "con") ? (stack.first!.substring as NSString).floatValue : IDNs[stack.first!.substring]!.value) where realValue != nil else {
+                        throw InterpreterError.NilException(variable: stack.first!.substring)
+                    }
+                    
+                    stack.removeFirst()
+                    
+                    realValue = realValue! - r2!
+                    stack.insert((lineNumber: -1, name: "con", substring: realValue!.description, index: LexTable.getCode("con")), atIndex: 0)
                     
                     break
                 case "*":
-                    let r2 : Float = ((stack.first?.name)! == "con") ? (stack.removeFirst().substring as NSString).floatValue : IDNs[stack.removeFirst().substring]!.value!
+                    guard let r2 : Float? = ((stack.first?.name)! == "con") ? (stack.first!.substring as NSString).floatValue : IDNs[stack.first!.substring]!.value where r2 != nil else {
+                        throw InterpreterError.NilException(variable: stack.first!.substring)
+                    }
                     
-                    realValue = (((stack.first?.name)! == "con") ? (stack.removeFirst().substring as NSString).floatValue : IDNs[stack.removeFirst().substring]!.value!)
+                    stack.removeFirst()
                     
-                    realValue *= r2
-                    stack.insert((lineNumber: -1, name: "con", substring: realValue.description, index: LexTable.getCode("con")), atIndex: 0)
+                    guard var realValue : Float? = (((stack.first?.name)! == "con") ? (stack.first!.substring as NSString).floatValue : IDNs[stack.first!.substring]!.value) where realValue != nil else {
+                        throw InterpreterError.NilException(variable: stack.first!.substring)
+                    }
+                    
+                    stack.removeFirst()
+                    
+                    realValue = realValue! * r2!
+                    stack.insert((lineNumber: -1, name: "con", substring: realValue!.description, index: LexTable.getCode("con")), atIndex: 0)
                     
                     break
                 case "/":
-                    let r2 : Float = ((stack.first?.name)! == "con") ? (stack.removeFirst().substring as NSString).floatValue : IDNs[stack.removeFirst().substring]!.value!
+                    guard let r2 : Float? = ((stack.first?.name)! == "con") ? (stack.first!.substring as NSString).floatValue : IDNs[stack.first!.substring]!.value where r2 != nil else  {
+                        throw InterpreterError.NilException(variable: stack.first!.substring)
+                    }
                     
-                    realValue = (((stack.first?.name)! == "con") ? (stack.removeFirst().substring as NSString).floatValue : IDNs[stack.removeFirst().substring]!.value!)
+                    stack.removeFirst()
                     
-                    realValue /= r2
-                    stack.insert((lineNumber: -1, name: "con", substring: realValue.description, index: LexTable.getCode("con")), atIndex: 0)
+                    guard var realValue : Float? = (((stack.first?.name)! == "con") ? (stack.first!.substring as NSString).floatValue : IDNs[stack.first!.substring]!.value) where realValue != nil else {
+                        throw InterpreterError.NilException(variable: stack.first!.substring)
+                    }
+                    
+                    stack.removeFirst()
+                    
+                    realValue = realValue! / r2!
+                    stack.insert((lineNumber: -1, name: "con", substring: realValue!.description, index: LexTable.getCode("con")), atIndex: 0)
                     
                     break
                 case "@":
-                    realValue = (((stack.first?.name)! == "con") ? (stack.removeFirst().substring as NSString).floatValue : IDNs[stack.removeFirst().substring]!.value!)
+                    guard let realValue : Float? = (((stack.first?.name)! == "con") ? (stack.first!.substring as NSString).floatValue : IDNs[stack.first!.substring]!.value) where realValue != nil else {
+                        throw InterpreterError.NilException(variable: stack.first!.substring)
+                    }
                     
-                    stack.insert((lineNumber: -1, name: "con", substring: (-realValue).description, index: LexTable.getCode("con")), atIndex: 0)
+                    stack.removeFirst()
+                    
+                    stack.insert((lineNumber: -1, name: "con", substring: (-realValue!).description, index: LexTable.getCode("con")), atIndex: 0)
                     
                     break
                 case ":=":
-                    realValue = (((stack.first?.name)! == "con") ? (stack.removeFirst().substring as NSString).floatValue : IDNs[stack.removeFirst().substring]!.value!)
+                    guard let realValue : Float? = (((stack.first?.name)! == "con") ? (stack.first!.substring as NSString).floatValue : IDNs[stack.first!.substring]!.value) where realValue != nil else {
+                        throw InterpreterError.NilException(variable: stack.first!.substring)
+                    }
                     
-                    IDNs[stack.removeFirst().substring]!.value = realValue
+                    stack.removeFirst()
+                    
+                    IDNs[stack.removeFirst().substring]!.value = realValue!
                     
                     break
                 case "read":
@@ -235,7 +324,15 @@ class RPNInterpreter {
                     
                     break
                 case "write":
-                    viewController.outputTextView!.string = viewController.outputTextView!.string! + "\n\(stack.first!.substring) = \(String(format: "%.5f", IDNs[stack.removeFirst().substring]!.value!))"
+                    guard let floatValue : Float? = IDNs[stack.first!.substring]!.value where floatValue != nil else {
+                        throw InterpreterError.NilException(variable: stack.first!.substring)
+                    }
+                    
+                    output += "\n\(stack.first!.substring) = "
+                    
+                    stack.removeFirst()
+                    
+                    output += formatter.stringFromNumber(floatValue!)!
                     
                     break
                 case "УПЛ":

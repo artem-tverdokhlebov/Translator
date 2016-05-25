@@ -10,13 +10,11 @@ import Cocoa
 
 class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSource {
     
-    @IBOutlet var codeTextView : NSTextView!
+    @IBOutlet var codeTextView : CodeTextView!
     @IBOutlet var outputTextView : NSTextView!
     
     
-    @IBOutlet weak var lexIndicator: NSProgressIndicator!
-    @IBOutlet weak var syntaxIndicator: NSProgressIndicator!
-    @IBOutlet weak var rpnInterpreterIndicator: NSProgressIndicator!
+    @IBOutlet weak var progressIndicator: NSProgressIndicator!
     
     @IBOutlet weak var lexAnalyserTableView : NSTableView!
     
@@ -30,6 +28,13 @@ class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSour
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        if let scrollView = codeTextView.enclosingScrollView {
+            var rulerView = LineNumberRulerView(textView: codeTextView)
+            scrollView.verticalRulerView = rulerView
+            scrollView.hasVerticalRuler = true
+            scrollView.rulersVisible = true
+        }
         
         self.lexAnalyserTableView.setDelegate(self)
         self.lexAnalyserTableView.setDataSource(self)
@@ -54,18 +59,28 @@ class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSour
     }
     
     @IBAction func buttonClicked(sender: NSButton) {
-        interpreter = RPNInterpreter(viewController: self)
-        
-        interpreter!.setListing(codeTextView.string!)
-        interpreter!.start()
-        
-        lexAnalyserTableView.reloadData()
-        
-        idnsTableView.reloadData()
-        consTableView.reloadData()
-        
-        syntaxAnalyserTableView.reloadData()
-        rpnGeneratorTableView.reloadData()
+        progressIndicator.startAnimation(self)
+        let priority = DISPATCH_QUEUE_PRIORITY_DEFAULT
+        dispatch_async(dispatch_get_global_queue(priority, 0)) {
+            self.interpreter = RPNInterpreter(viewController: self)
+            
+            self.interpreter!.setListing(self.codeTextView.string!)
+            self.interpreter!.start()
+            
+            dispatch_async(dispatch_get_main_queue()) {
+                self.outputTextView.string = self.interpreter!.output
+                
+                self.lexAnalyserTableView.reloadData()
+                
+                self.idnsTableView.reloadData()
+                self.consTableView.reloadData()
+                
+                self.syntaxAnalyserTableView.reloadData()
+                self.rpnGeneratorTableView.reloadData()
+                
+                self.progressIndicator.stopAnimation(self)
+            }
+        }
     }
     
     func numberOfRowsInTableView(tableView: NSTableView) -> Int {
@@ -171,6 +186,34 @@ class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSour
                 
                 return nil
                 // TODO: syntax analyser table
+            } else if tableView == syntaxAnalyserTableView {
+                let item = interpreter!.syntaxAnalyser!.outputTable[row]
+                
+                text = ""
+                
+                if tableColumn == tableView.tableColumns[0] {
+                    text = String(item.current)
+                    cellIdentifier = "currentCell"
+                } else if tableColumn == tableView.tableColumns[1] {
+                    text = item.lexeme
+                    cellIdentifier = "lexemeCell"
+                } else if tableColumn == tableView.tableColumns[2] {
+                    text = item.substring
+                    cellIdentifier = "substringCell"
+                } else if tableColumn == tableView.tableColumns[3] {
+                    text = String(item.next)
+                    cellIdentifier = "nextCell"
+                } else if tableColumn == tableView.tableColumns[4] {
+                    text = item.stack
+                    cellIdentifier = "stackCell"
+                }
+                
+                if let cell = tableView.makeViewWithIdentifier(cellIdentifier, owner: nil) as? NSTableCellView {
+                    cell.textField?.stringValue = text
+                    return cell
+                }
+                
+                return nil
             } else if tableView == consTableView {
                 let item = interpreter!.lexAnalyser!.CONs[row]
                 

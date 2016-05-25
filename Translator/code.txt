@@ -1,17 +1,29 @@
 program lab1
 var y, dx, a, b, c : real;
 begin
-    read(a);
-    read(b);
-    read(c);
-    y := 4;
-    dx := (1 + a) * (b - c);
-    a := 0.1;
-    do c := c + dx by a to b {
-        write(c);
-        write(a);
-    };
-    if not [c > 0] and b > 0 goto 1;
-    1: y := a + b - c;
-    write(y);
+read(a);
+read(b);
+read(c);
+y := 4;
+dx := (1 + a) * (b - c);
+a := 0.1;
+do c := c + dx by a to b {
+write(c);
+write(a);
+};
+if not [c > 0] and b > 0 goto 1;
+1: y := a + b - c;
+write(y);
+end
+
+program lab1
+var y, dx, a, b, c : real;
+begin
+a := 1;
+b := 999;
+do a := 1 by 1 to 10 {
+if a > 5 goto 1;
+write(a);
+};
+1: write(b);
 end

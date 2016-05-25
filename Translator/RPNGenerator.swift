@@ -59,12 +59,6 @@ class RPNGenerator {
     
     var outputTable : [(lexeme: String, stack: String, RPNStack: String)] = [(lexeme: String, stack: String, RPNStack: String)]()
     
-    let specialIndexes : [String : Int] = [
-        "m" : LexTable.getCode("label"),
-        "m:" : LexTable.getCode("label"),
-        "r" : LexTable.getCode("idn")
-    ]
-    
     func isArithmeticOrBrackets(index: Int) -> Bool {
         let array : [String] = [
             "+",
@@ -300,7 +294,7 @@ class RPNGenerator {
             RPNstack.append((lineNumber: -1, name: "*", substring: "*", index: LexTable.getCode("*")))
             RPNstack.append((lineNumber: -1, name: "con", substring: "0", index: LexTable.getCode("con")))
             RPNstack.append((lineNumber: -1, name: "<=", substring: "<=", index: LexTable.getCode("<=")))
-            RPNstack.append((lineNumber: -1, name: m[m.count - 1].name, substring: m[m.count - 1].name, index: specialIndexes["m"]!))
+            RPNstack.append((lineNumber: -1, name: m[m.count - 1].name, substring: m[m.count - 1].name, index: LexTable.getCode("label")))
             RPNstack.append((lineNumber: -1, name: "УПЛ", substring: "УПЛ", index: 0))
             
             // remove cycle r
@@ -322,9 +316,9 @@ class RPNGenerator {
                 localStack.removeLast()
             }
             
-            RPNstack.append((lineNumber: -1, name: m[m.count - 3].name, substring: m[m.count - 3].name, index: specialIndexes["m"]!))
+            RPNstack.append((lineNumber: -1, name: m[m.count - 3].name, substring: m[m.count - 3].name, index: LexTable.getCode("label")))
             RPNstack.append((lineNumber: -1, name: "БП", substring: "БП", index: 0))
-            RPNstack.append((lineNumber: -1, name: m[m.count - 1].name + ":", substring: m[m.count - 1].name + ":", index: specialIndexes["m:"]!))
+            RPNstack.append((lineNumber: -1, name: m[m.count - 1].name + ":", substring: m[m.count - 1].name + ":", index: LexTable.getCode("label")))
             
             // remove cycle labels
             if m.count >= 3 {
@@ -340,8 +334,6 @@ class RPNGenerator {
             break
             
         case "goto":
-            print(localStack)
-            
             while !localStack.isEmpty && (priorityOperationsTable[(localStack.last?.name)!] != nil) &&
                 priorityOperationsTable[(localStack.last?.name)!]! >= priorityOperationsTable[lexeme.name]! && localStack.last?.name != "if" {
                     RPNstack.append(localStack.removeLast())
@@ -352,7 +344,7 @@ class RPNGenerator {
             }
             
             while !localStack.isEmpty && (priorityOperationsTable[(localStack.last?.name)!] != nil) &&
-                priorityOperationsTable[(localStack.last?.name)!]! >= priorityOperationsTable[lexeme.name]! {
+                priorityOperationsTable[(localStack.last?.name)!]! >= priorityOperationsTable[lexeme.name]!  && localStack.last?.name != "do" {
                     RPNstack.append(localStack.removeLast())
             }
             

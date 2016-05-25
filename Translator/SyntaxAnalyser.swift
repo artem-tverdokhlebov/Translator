@@ -64,9 +64,11 @@ class SyntaxAnalyser {
         (alpha: 108, beta: 200, sign: ":=", stack: 109),
         (alpha: 109, beta: 200, sign: "by", stack: 110),
         (alpha: 110, beta: 200, sign: "to", stack: 111),
-        (alpha: 111, beta: 101, sign: "{", stack: 112),
-        (alpha: 112, beta: 101, sign: NO_NAME, stack: 113),
+        (alpha: 111, beta: 101, sign: "{", stack: 113),
+        //(alpha: 112, beta: 101, sign: NO_NAME, stack: 113),
+        // (alpha: 111, beta: 113, sign: NO_NAME, stack: nil),
         (alpha: 113, beta: 114, sign: "}", stack: nil),
+        (alpha: 113, beta: 101, sign: NO_NAME, stack: 113),
         (alpha: 114, beta: BACK, sign: ";", stack: nil),
         
         // If
@@ -110,7 +112,7 @@ class SyntaxAnalyser {
     init(lexemes : [Lexeme]) {
         self.lexemes = lexemes
         
-        outputTable.append((current: 1, lexeme: "", substring: lexemes[index].substring, next: 2, stack: stack.map({"\($0)"}).joinWithSeparator(", ")))
+        outputTable.append((current: 1, lexeme: lexemes[index].name, substring: lexemes[index].substring, next: 2, stack: stack.map({"\($0)"}).joinWithSeparator(", ")))
         
         mainCycle()
     }
@@ -168,7 +170,7 @@ class SyntaxAnalyser {
         }
         
         if index < lexemes.count {
-            outputTable.append((current: originalCondition, lexeme: "", substring: lexemes[index].substring, next: currentCondition, stack: stack.map({"\($0)"}).joinWithSeparator(", ")))
+            outputTable.append((current: originalCondition, lexeme: lexemes[index].name, substring: lexemes[index].substring, next: currentCondition, stack: stack.map({"\($0)"}).joinWithSeparator(", ")))
         }
     }
 }

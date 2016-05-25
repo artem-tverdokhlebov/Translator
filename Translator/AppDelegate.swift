@@ -22,3 +22,19 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
 }
 
+extension NSAlert {
+    func runModalSheetForWindow(aWindow: NSWindow) -> Int {
+        self.beginSheetModalForWindow(aWindow) { returnCode in
+            NSApp.stopModalWithCode(returnCode)
+        }
+        let modalCode = NSApp.runModalForWindow(self.window)
+        return modalCode
+    }
+    
+    func runModalSheet() -> Int {
+        // Swift 1.2 gives the following error if only using one '!' below:
+        // Value of optional type 'NSWindow?' not unwrapped; did you mean to use '!' or '?'?
+        return runModalSheetForWindow(NSApp.mainWindow!)
+    }
+}
+
