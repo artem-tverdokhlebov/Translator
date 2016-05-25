@@ -23,6 +23,7 @@ class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSour
     
     @IBOutlet weak var syntaxAnalyserTableView : NSTableView!
     @IBOutlet weak var rpnGeneratorTableView : NSTableView!
+    @IBOutlet weak var labelsTableView: NSTableView!
     
     var interpreter : RPNInterpreter?
     
@@ -50,6 +51,9 @@ class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSour
         
         self.rpnGeneratorTableView.setDelegate(self)
         self.rpnGeneratorTableView.setDataSource(self)
+        
+        self.labelsTableView.setDelegate(self)
+        self.labelsTableView.setDataSource(self)
     }
     
     override var representedObject: AnyObject? {
@@ -78,6 +82,8 @@ class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSour
                 self.syntaxAnalyserTableView.reloadData()
                 self.rpnGeneratorTableView.reloadData()
                 
+                self.labelsTableView.reloadData()
+                
                 self.progressIndicator.stopAnimation(self)
             }
         }
@@ -103,6 +109,10 @@ class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSour
             
             if tableView == consTableView && interpreter!.lexAnalyser?.CONs != nil {
                 return interpreter!.lexAnalyser!.CONs.count
+            }
+            
+            if tableView == labelsTableView {
+                return interpreter!.rpnGenerator!.labels.count
             }
         }
         return 0
@@ -247,6 +257,26 @@ class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSour
                 } else if tableColumn == tableView.tableColumns[2] {
                     text = item.RPNStack
                     cellIdentifier = "rpnCell"
+                }
+                
+                if let cell = tableView.makeViewWithIdentifier(cellIdentifier, owner: nil) as? NSTableCellView {
+                    cell.textField?.stringValue = text
+                    return cell
+                }
+                
+                return nil
+            } else if tableView == labelsTableView {
+                
+                let item = interpreter!.rpnGenerator!.labels[Array(interpreter!.rpnGenerator!.labels.keys)[row]]
+                
+                text = ""
+                
+                if tableColumn == tableView.tableColumns[0] {
+                    text = item!.name
+                    cellIdentifier = "labelCell"
+                } else if tableColumn == tableView.tableColumns[1] {
+                    text = String(item!.address)
+                    cellIdentifier = "addressCell"
                 }
                 
                 if let cell = tableView.makeViewWithIdentifier(cellIdentifier, owner: nil) as? NSTableCellView {

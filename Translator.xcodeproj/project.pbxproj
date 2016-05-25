@@ -82,11 +82,19 @@
 				AC2BCB471CF119D300BB27E3 /* RPNGenerator.swift */,
 				ACFCF7051CECB77900D6D4A3 /* RPNInterpreter.swift */,
 				AC63BBEA1CD0259F00631CD0 /* Products */,
+				AC63DBCA1CF5F3D300C9B067 /* Additional */,
+			);
+			path = Translator;
+			sourceTree = "<group>";
+		};
+		AC63DBCA1CF5F3D300C9B067 /* Additional */ = {
+			isa = PBXGroup;
+			children = (
 				AC91B56E1CF3BDAC006D26F9 /* Window.swift */,
 				AC63DBC61CF5E59400C9B067 /* CodeTextView.swift */,
 				AC63DBC71CF5E59400C9B067 /* LineNumberRulerView.swift */,
 			);
-			path = Translator;
+			name = Additional;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

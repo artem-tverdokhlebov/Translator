@@ -356,9 +356,6 @@ class RPNInterpreter {
                     break
                 }
             }
-            
-            
-            
         }
     }
 }
