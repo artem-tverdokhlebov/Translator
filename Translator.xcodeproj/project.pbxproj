@@ -35,6 +35,7 @@
 		AC63BBFD1CD02FA600631CD0 /* LexTable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LexTable.swift; sourceTree = "<group>"; };
 		AC63DBC61CF5E59400C9B067 /* CodeTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CodeTextView.swift; sourceTree = "<group>"; };
 		AC63DBC71CF5E59400C9B067 /* LineNumberRulerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LineNumberRulerView.swift; sourceTree = "<group>"; };
+		AC63DBE61CF6258300C9B067 /* Lab2.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Lab2.xcodeproj; path = Lab2/Lab2.xcodeproj; sourceTree = "<group>"; };
 		AC91B56E1CF3BDAC006D26F9 /* Window.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Window.swift; sourceTree = "<group>"; };
 		ACBE33151CDA455900FF1B34 /* SyntaxAnalyser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyntaxAnalyser.swift; sourceTree = "<group>"; };
 		ACFCF7051CECB77900D6D4A3 /* RPNInterpreter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RPNInterpreter.swift; sourceTree = "<group>"; };
@@ -55,6 +56,7 @@
 			isa = PBXGroup;
 			children = (
 				AC63BBEB1CD0259F00631CD0 /* Translator */,
+				AC63DBE61CF6258300C9B067 /* Lab2.xcodeproj */,
 			);
 			sourceTree = "<group>";
 		};
