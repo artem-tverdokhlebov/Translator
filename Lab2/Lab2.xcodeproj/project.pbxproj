@@ -14,6 +14,7 @@
 		AC63DBF21CF625F500C9B067 /* LexTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC63DBF01CF625F500C9B067 /* LexTable.swift */; };
 		AC63DBF31CF625F500C9B067 /* LexAnalyser.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC63DBF11CF625F500C9B067 /* LexAnalyser.swift */; };
 		AC63DBF51CF6271900C9B067 /* RelationTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC63DBF41CF6271900C9B067 /* RelationTable.swift */; };
+		AC63DBF71CF7569F00C9B067 /* RPN.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC63DBF61CF7569F00C9B067 /* RPN.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +27,7 @@
 		AC63DBF01CF625F500C9B067 /* LexTable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LexTable.swift; path = ../../Translator/LexTable.swift; sourceTree = "<group>"; };
 		AC63DBF11CF625F500C9B067 /* LexAnalyser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LexAnalyser.swift; path = ../../Translator/LexAnalyser.swift; sourceTree = "<group>"; };
 		AC63DBF41CF6271900C9B067 /* RelationTable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RelationTable.swift; sourceTree = "<group>"; };
+		AC63DBF61CF7569F00C9B067 /* RPN.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RPN.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -66,6 +68,7 @@
 				AC63DBDD1CF6258300C9B067 /* Main.storyboard */,
 				AC63DBE01CF6258300C9B067 /* Info.plist */,
 				AC63DBF41CF6271900C9B067 /* RelationTable.swift */,
+				AC63DBF61CF7569F00C9B067 /* RPN.swift */,
 			);
 			path = Lab2;
 			sourceTree = "<group>";
@@ -142,6 +145,7 @@
 			files = (
 				AC63DBF31CF625F500C9B067 /* LexAnalyser.swift in Sources */,
 				AC63DBF21CF625F500C9B067 /* LexTable.swift in Sources */,
+				AC63DBF71CF7569F00C9B067 /* RPN.swift in Sources */,
 				AC63DBF51CF6271900C9B067 /* RelationTable.swift in Sources */,
 				AC63DBDA1CF6258300C9B067 /* ViewController.swift in Sources */,
 				AC63DBD81CF6258300C9B067 /* AppDelegate.swift in Sources */,

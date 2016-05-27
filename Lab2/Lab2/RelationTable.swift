@@ -73,15 +73,15 @@ class Grammar {
     }
     
     func last(value : String, inout result : [String]) {
-        //var result = result
-        var list : [[String]]
-        
         if rules[value] != nil {
-            list = rules[value]!
+            let list : [[String]] = rules[value]!
             
             for item in list {
-                result.append(item.last!)
-                last(item.last!, result: &result)
+                if !result.contains(item.last!)
+                {
+                    result.append(item.last!)
+                    last(item.last!, result: &result)
+                }
             }
         }
     }
@@ -121,8 +121,10 @@ class RelationTable {
                     if isFirst {
                         isFirst = false
                     } else {
-                        if table[RelationKey(prevItem, item)] == "=" || table[RelationKey(prevItem, item)] == "<" || table[RelationKey(prevItem, item)] == ">" || table[RelationKey(prevItem, item)] == "" {
+                        if table[RelationKey(item, prevItem)] == nil || table[RelationKey(item, prevItem)] == "=" {
                             table[RelationKey(prevItem, item)] = "="
+                        } else {
+                            print("Equal \(prevItem) \(item)")
                         }
                     }
                     
@@ -140,9 +142,11 @@ class RelationTable {
             
             for S in list {
                 for R in grammar.getAllItems() {
-                    if S != "|" && R != "|" && V != "|" && table[RelationKey(R, V)] != "=" {
-                        if table[RelationKey(R, S)] == "=" || table[RelationKey(R, S)] == "<" || table[RelationKey(R, S)] == ">" || table[RelationKey(R, S)] == "" {
+                    if S != "|" && R != "|" && V != "|" && table[RelationKey(R, V)] == "=" {
+                        if table[RelationKey(R, S)] == nil || table[RelationKey(R, S)] == "<" {
                             table[RelationKey(R, S)] = "<";
+                        } else {
+                            print("Less \(R) \(S)")
                         }
                     }
                 }
@@ -163,8 +167,10 @@ class RelationTable {
                     
                     for S in first {
                         for R in last {
-                            if table[RelationKey(R, S)] == "=" || table[RelationKey(R, S)] == "<" || table[RelationKey(R, S)] == ">" || table[RelationKey(R, S)] == "" {
+                            if table[RelationKey(R, S)] == nil || table[RelationKey(R, S)] == ">" {
                                 table[RelationKey(R, S)] = ">"
+                            } else {
+                                print("Greater \(R) \(S)")
                             }
                         }
                     }
@@ -176,16 +182,16 @@ class RelationTable {
     var grammar : Grammar = Grammar()
     
     init() {
-        grammar.addRule("program", sequence: [["program", "id", "var", "listId1", ":", "real", "", "begin", "listOp1", "end"]])
+        grammar.addRule("program", sequence: [["program", "idn", "var", "listId1", ":", "real", ";", "begin", "listOp1", "end"]])
         grammar.addRule("listId1", sequence: [["listId"]])
-        grammar.addRule("listId", sequence: [[",", "id" ], ["listId", ",", "id"]])
+        grammar.addRule("listId", sequence: [[",", "idn" ], ["listId", ",", "idn"]])
         
         grammar.addRule("listOp1", sequence: [ [ "listOp" ] ])
-        grammar.addRule("listOp", sequence: [[ "operator", "" ], [ "listOp", "operator", "" ]])
+        grammar.addRule("listOp", sequence: [[ "operator", ";" ], [ "listOp", "operator", ";" ]])
         
         grammar.addRule("operator", sequence: [ [ "label", ":", "unmarkOp" ], ["unmarkOp" ]])
         
-        grammar.addRule("unmarkOp", sequence: [ [ "id", ":=", "expr1" ], [ "read", "(", "id", ")" ], [ "write", "(", "id", ")" ], [ "do", "id", ":=", "expr1", "by", "expr1", "to", "expr1", "", "unmarkOp1" ], [ "if", "log.expr1", "goto", "label" ] ])
+        grammar.addRule("unmarkOp", sequence: [ [ "idn", ":=", "expr1" ], [ "read", "(", "idn", ")" ], [ "write", "(", "idn", ")" ], [ "do", "idn", ":=", "expr1", "by", "expr1", "to", "expr1", ";", "unmarkOp1" ], [ "if", "log.expr1", "goto", "label" ] ])
         grammar.addRule("unmarkOp1", sequence: [[ "unmarkOp" ]])
         
         grammar.addRule("expr1", sequence: [[ "expr" ]])
@@ -194,9 +200,8 @@ class RelationTable {
         grammar.addRule("term1", sequence: [ [ "term" ] ])
         grammar.addRule("term", sequence: [[ "mult1" ], [ "term", "*", "mult1" ], [ "term", "/", "mult1" ] ])
         
-        
         grammar.addRule("mult1", sequence:[ [ "mult" ] ])
-        grammar.addRule("mult", sequence:[ [ "id" ], [ "const" ], [ "(", "expr1", ")" ] ])
+        grammar.addRule("mult", sequence:[ [ "idn" ], [ "con" ], [ "(", "expr1", ")" ] ])
         
         grammar.addRule("log.expr1", sequence:[ [ "log.expr" ] ])
         grammar.addRule("log.expr", sequence:[ [ "log.expr", "or", "log.term1" ], [ "log.term1" ] ])
@@ -207,7 +212,7 @@ class RelationTable {
         grammar.addRule("log.mult1", sequence:[ [ "log.mult" ] ])
         grammar.addRule("log.mult", sequence:[ [ "expr1", "ratio", "expr1" ], [ "[", "log.expr1", "]" ], [ "not", "log.mult" ] ])
         
-        grammar.addRule("ratio", sequence:[ [ "=" ], [ "<>" ], [ ">" ], [ "<" ], [ ">=" ], [ "<=" ] ])
+        grammar.addRule("ratio", sequence:[ [ "=" ], [ "!=" ], [ ">" ], [ "<" ], [ ">=" ], [ "<=" ] ])
         
         grammar.updateKeys()
         grammar.updateAllItems()

@@ -683,7 +683,7 @@
                                             <rect key="frame" x="10" y="33" width="754" height="587"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
-                                                <splitView translatesAutoresizingMaskIntoConstraints="NO" id="7fj-zY-BLf">
+                                                <splitView misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7fj-zY-BLf">
                                                     <rect key="frame" x="0.0" y="0.0" width="754" height="587"/>
                                                     <subviews>
                                                         <scrollView fixedFrame="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" id="h5X-PZ-OP5">
