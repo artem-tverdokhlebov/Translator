@@ -21,9 +21,13 @@ class RPN {
     
     var result : Float? = nil
     
+    var outputTable : [(String, String, String, String)] = [(String, String, String, String)]()
+    
     init(listing : String) {
         lexAnalyser = LexAnalyser(listing: listing)
         lexemes = lexAnalyser!.lexemes
+        
+        outputTable = [(String, String, String, String)]()
         
         polizRules["/"] = [[ "term", "/", "mult1" ]]
         polizRules["*"] = [[ "term", "*", "mult1" ]]
@@ -78,23 +82,19 @@ class RPN {
         while lexemes.count > 0 {
             switch relationTable.table[RelationKey(stack.last!, lexemes[0].name)]! {
             case "<":
-                //print(RPNstack.map { $0.name })
                 
-                print("\(stack.joinWithSeparator(", "))\t|\t<\t|\t\(lexemes.map { $0.name }.joinWithSeparator(", "))")
+                outputTable.append((stack.joinWithSeparator(" "), "<", lexemes.map { $0.name }.joinWithSeparator(" "), RPNstack.map { $0.substring }.joinWithSeparator(" ")))
                 
                 push()
                 break
             case "=":
-                //print(RPNstack.map { $0.name })
                 
-                print("\(stack.joinWithSeparator(", "))\t|\t=\t|\t\(lexemes.map { $0.name }.joinWithSeparator(", "))")
-                
+                outputTable.append((stack.joinWithSeparator(" "), "=", lexemes.map { $0.name }.joinWithSeparator(" "), RPNstack.map { $0.substring }.joinWithSeparator(" ")))
                 push()
                 break
             case ">":
-                //print(RPNstack.map { $0.name })
                 
-                print("\(stack.joinWithSeparator(", "))\t|\t>\t|\t\(lexemes.map { $0.name }.joinWithSeparator(", "))")
+                outputTable.append((stack.joinWithSeparator(" "), ">", lexemes.map { $0.name }.joinWithSeparator(" "), RPNstack.map { $0.substring }.joinWithSeparator(" ")))
                 
                 var grammarList : [String] = [String]()
                 
