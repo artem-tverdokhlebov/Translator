@@ -18,6 +18,7 @@
 		AC63DBC81CF5E59400C9B067 /* CodeTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC63DBC61CF5E59400C9B067 /* CodeTextView.swift */; };
 		AC63DBC91CF5E59400C9B067 /* LineNumberRulerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC63DBC71CF5E59400C9B067 /* LineNumberRulerView.swift */; };
 		AC91B56F1CF3BDAC006D26F9 /* Window.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC91B56E1CF3BDAC006D26F9 /* Window.swift */; };
+		ACE179C21CFA3E7500618550 /* factorial.tvc in Resources */ = {isa = PBXBuildFile; fileRef = ACE179C11CFA3E7500618550 /* factorial.tvc */; };
 		ACF5A3721CDAA7EA0013395C /* SyntaxAnalyser.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACBE33151CDA455900FF1B34 /* SyntaxAnalyser.swift */; };
 		ACFCF7061CECB77900D6D4A3 /* RPNInterpreter.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACFCF7051CECB77900D6D4A3 /* RPNInterpreter.swift */; };
 /* End PBXBuildFile section */
@@ -48,6 +49,7 @@
 		AC63DBE61CF6258300C9B067 /* Lab2.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Lab2.xcodeproj; path = Lab2/Lab2.xcodeproj; sourceTree = "<group>"; };
 		AC91B56E1CF3BDAC006D26F9 /* Window.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Window.swift; sourceTree = "<group>"; };
 		ACBE33151CDA455900FF1B34 /* SyntaxAnalyser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyntaxAnalyser.swift; sourceTree = "<group>"; };
+		ACE179C11CFA3E7500618550 /* factorial.tvc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = factorial.tvc; sourceTree = "<group>"; };
 		ACFCF7051CECB77900D6D4A3 /* RPNInterpreter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RPNInterpreter.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -103,6 +105,7 @@
 				ACFCF7051CECB77900D6D4A3 /* RPNInterpreter.swift */,
 				AC63BBEA1CD0259F00631CD0 /* Products */,
 				AC63DBCA1CF5F3D300C9B067 /* Additional */,
+				ACE179C11CFA3E7500618550 /* factorial.tvc */,
 			);
 			path = Translator;
 			sourceTree = "<group>";
@@ -192,6 +195,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				AC63BBF11CD0259F00631CD0 /* Assets.xcassets in Resources */,
+				ACE179C21CFA3E7500618550 /* factorial.tvc in Resources */,
 				AC4741681CD62EFC005A58B8 /* code.txt in Resources */,
 				AC63BBF41CD0259F00631CD0 /* Main.storyboard in Resources */,
 			);

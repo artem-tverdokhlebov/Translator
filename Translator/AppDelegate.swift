@@ -10,16 +10,29 @@ import Cocoa
 
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
+    @IBOutlet weak var openMenuItem: NSMenuItem!
     
     func applicationDidFinishLaunching(aNotification: NSNotification) {
-        // Insert code here to initialize your application
+        
     }
     
     func applicationWillTerminate(aNotification: NSNotification) {
-        // Insert code here to tear down your application
+        
+    }
+}
+
+extension NSOpenPanel {
+    func runModalSheetForWindow(aWindow: NSWindow) -> Int {
+        self.beginSheetModalForWindow(aWindow) { returnCode in
+            NSApp.stopModalWithCode(returnCode)
+        }
+        let modalCode = NSApp.runModalForWindow(aWindow)
+        return modalCode
     }
     
-    
+    func runModalSheet() -> Int {
+        return runModalSheetForWindow(NSApp.mainWindow!)
+    }
 }
 
 extension NSAlert {
@@ -27,13 +40,11 @@ extension NSAlert {
         self.beginSheetModalForWindow(aWindow) { returnCode in
             NSApp.stopModalWithCode(returnCode)
         }
-        let modalCode = NSApp.runModalForWindow(self.window)
+        let modalCode = NSApp.runModalForWindow(aWindow)
         return modalCode
     }
     
     func runModalSheet() -> Int {
-        // Swift 1.2 gives the following error if only using one '!' below:
-        // Value of optional type 'NSWindow?' not unwrapped; did you mean to use '!' or '?'?
         return runModalSheetForWindow(NSApp.mainWindow!)
     }
 }

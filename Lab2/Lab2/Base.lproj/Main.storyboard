@@ -714,7 +714,7 @@ DQ
                                                 <scrollView autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GuF-cX-4yf">
                                                     <rect key="frame" x="-3" y="-3" width="535" height="236"/>
                                                     <clipView key="contentView" id="pd5-Vx-uO4">
-                                                        <rect key="frame" x="1" y="23" width="533" height="212"/>
+                                                        <rect key="frame" x="1" y="0.0" width="533" height="235"/>
                                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                         <subviews>
                                                             <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" alternatingRowBackgroundColors="YES" columnReordering="NO" multipleSelection="NO" emptySelection="NO" autosaveColumns="NO" typeSelect="NO" headerView="FPB-XD-sNS" id="jEq-MP-lPa">
@@ -785,7 +785,7 @@ DQ
                                                         <rect key="frame" x="1" y="219" width="533" height="16"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                     </scroller>
-                                                    <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="LET-5X-Eid">
+                                                    <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="NO" id="LET-5X-Eid">
                                                         <rect key="frame" x="224" y="17" width="15" height="102"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                     </scroller>
@@ -811,7 +811,7 @@ DQ
                                                 <scrollView autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="200" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WOu-Jk-Etg">
                                                     <rect key="frame" x="-3" y="-3" width="541" height="236"/>
                                                     <clipView key="contentView" id="2Zl-85-UfW">
-                                                        <rect key="frame" x="1" y="23" width="539" height="212"/>
+                                                        <rect key="frame" x="1" y="0.0" width="539" height="235"/>
                                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                         <subviews>
                                                             <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" alternatingRowBackgroundColors="YES" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" headerView="BQz-dG-GpB" id="SSq-WO-rHW">
@@ -829,7 +829,7 @@ DQ
                                                         <rect key="frame" x="1" y="117" width="236" height="16"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                     </scroller>
-                                                    <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="fkA-jp-GFF">
+                                                    <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="NO" id="fkA-jp-GFF">
                                                         <rect key="frame" x="224" y="17" width="15" height="102"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                     </scroller>

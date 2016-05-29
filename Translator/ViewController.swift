@@ -31,7 +31,7 @@ class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSour
         super.viewDidLoad()
         
         if let scrollView = codeTextView.enclosingScrollView {
-            var rulerView = LineNumberRulerView(textView: codeTextView)
+            let rulerView = LineNumberRulerView(textView: codeTextView)
             scrollView.verticalRulerView = rulerView
             scrollView.hasVerticalRuler = true
             scrollView.rulersVisible = true
@@ -54,6 +54,29 @@ class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSour
         
         self.labelsTableView.setDelegate(self)
         self.labelsTableView.setDataSource(self)
+        
+        let appDelegate = NSApplication.sharedApplication().delegate as! AppDelegate
+        appDelegate.openMenuItem.action = #selector(ViewController.openFile(_:))
+    }
+    
+    func openFile(sender : NSMenuItem) {
+        let myFileDialog: NSOpenPanel = NSOpenPanel()
+        myFileDialog.allowedFileTypes = [ "txt", "tvc" ]
+        myFileDialog.runModalSheet()
+        
+        // Get the path to the file chosen in the NSOpenPanel
+        let path = myFileDialog.URL?.path
+        
+        // Make sure that a path was chosen
+        if (path != nil) {
+            do {
+                let text = try String(contentsOfFile: path!, encoding: NSUTF8StringEncoding)
+                
+                codeTextView.string = text
+            } catch {
+                print("Error")
+            }
+        }
     }
     
     override var representedObject: AnyObject? {
@@ -64,15 +87,15 @@ class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSour
     
     @IBAction func buttonClicked(sender: NSButton) {
         progressIndicator.startAnimation(self)
-        let priority = DISPATCH_QUEUE_PRIORITY_DEFAULT
-        dispatch_async(dispatch_get_global_queue(priority, 0)) {
+        
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
             self.interpreter = RPNInterpreter(viewController: self)
             
             self.interpreter!.setListing(self.codeTextView.string!)
             self.interpreter!.start()
             
             dispatch_async(dispatch_get_main_queue()) {
-                self.outputTextView.string = self.interpreter!.output
+                self.outputTextView.string = self.interpreter!.output.stringByTrimmingCharactersInSet(NSCharacterSet(charactersInString: "\n "))
                 
                 self.lexAnalyserTableView.reloadData()
                 
@@ -115,6 +138,7 @@ class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSour
                 return interpreter!.rpnGenerator!.labels.count
             }
         }
+        
         return 0
     }
     
@@ -195,7 +219,6 @@ class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSour
                 }
                 
                 return nil
-                // TODO: syntax analyser table
             } else if tableView == syntaxAnalyserTableView {
                 let item = interpreter!.syntaxAnalyser!.outputTable[row]
                 
