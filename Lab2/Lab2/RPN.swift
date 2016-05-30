@@ -61,7 +61,7 @@ class RPN {
             }
         }
         
-        return "$"
+        return ""
     }
     
     func GetKeyByValue(key : [String]) -> String {
@@ -111,7 +111,7 @@ class RPN {
                 print(grammarList.joinWithSeparator(", "))
                 
                 let polizOperator : String = getPolizRuleResult(grammarList)
-                if polizOperator != "$" && polizOperator != "" {
+                if polizOperator != "" {
                     RPNstack.append((lineNumber: -1, name: polizOperator, substring: polizOperator, index: LexTable.getCode(polizOperator)))
                 }
                 

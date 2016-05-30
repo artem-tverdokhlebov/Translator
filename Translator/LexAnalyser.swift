@@ -41,7 +41,7 @@ class LexAnalyser {
         for label in LBLs {
             if label.type == "U" {
                 if !LBLs.contains({ $0.name == label.name && $0.type == "D" }) {
-                    errors.append("Error with label '\(label.name)'")
+                    errors.append("Error with label \"\(label.name)\"")
                 }
             }
         }

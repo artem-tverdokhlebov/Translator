@@ -134,7 +134,7 @@ class ViewController: NSViewController, NSTableViewDelegate, NSTableViewDataSour
                 return interpreter!.lexAnalyser!.CONs.count
             }
             
-            if tableView == labelsTableView {
+            if tableView == labelsTableView && interpreter!.rpnGenerator != nil {
                 return interpreter!.rpnGenerator!.labels.count
             }
         }

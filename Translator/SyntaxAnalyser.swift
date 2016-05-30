@@ -65,8 +65,6 @@ class SyntaxAnalyser {
         (alpha: 109, beta: 200, sign: "by", stack: 110),
         (alpha: 110, beta: 200, sign: "to", stack: 111),
         (alpha: 111, beta: 101, sign: "{", stack: 113),
-        //(alpha: 112, beta: 101, sign: NO_NAME, stack: 113),
-        // (alpha: 111, beta: 113, sign: NO_NAME, stack: nil),
         (alpha: 113, beta: 114, sign: "}", stack: nil),
         (alpha: 113, beta: 101, sign: NO_NAME, stack: 113),
         (alpha: 114, beta: BACK, sign: ";", stack: nil),
@@ -152,7 +150,7 @@ class SyntaxAnalyser {
             }
         }
         
-        errors.append("Ошибка в строке: \(lexemes[index].lineNumber). \(lexemes[index].substring)")
+        errors.append("Error in line \(lexemes[index].lineNumber) with lexeme: \"\(lexemes[index].substring)\"")
         
         return false
     }

@@ -392,11 +392,11 @@ class RPNGenerator {
                 RPNstack.append((lineNumber: -1, name: "УПЛ", substring: "УПЛ", index: 0))
                 localStack.removeLast()
             }
-            
-            if localStack.last?.name == "do" {
-                localStack.removeLast()
-            }
-            
+            /*
+             if localStack.last?.name == "do" {
+             localStack.removeLast()
+             }
+             */
             break
             
         default: break
